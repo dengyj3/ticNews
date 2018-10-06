@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,7 +31,7 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
 
     @Value("${wx.appid:wx18227c539a8494aa}")
     private String appId;
-    @Value("${wx.redirect_uri:http://rwyvgz.natappfree.cc/ticNews/article/queryArticle?pageNo=0&pageSize=10}")
+    @Value("${wx.redirect_uri:http://tey34y.natappfree.cc/ticNews/article/queryArticle?pageNo=0&pageSize=10}")
     private String redirectUri = "";
 
     private String responseType = "code";
@@ -106,7 +108,12 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
          * 返回结果（code的值，不一定是显示在浏览器界面上的，具体看你的redirect_uri中的文件）
          * 061h4k8Z1G7AhY0025bZ1nbh8Z1h4k8Q
          */
-        String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appId+"&redirect_uri="+redirectUri+"&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect";
+        String url = null;
+        try {
+            url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appId+"&redirect_uri="+ URLEncoder.encode(redirectUri,"utf-8")+"&secret="+secret+"&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect";
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         logger.info("url is : " + url);
         String result = HttpBaseUtils.getRequestJson(restTemplate,url, null);
         return result;
