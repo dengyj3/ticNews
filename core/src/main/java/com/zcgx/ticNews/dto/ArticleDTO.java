@@ -1,5 +1,6 @@
 package com.zcgx.ticNews.dto;
 
+import java.util.Date;
 import java.util.List;
 
 public class ArticleDTO {
@@ -10,7 +11,7 @@ public class ArticleDTO {
     private long votePositiveCount;
     private String voteNegtiveName;
     private long voteNegtiveCount;
-    private String createTime;
+    private Date createTime;
     private String url;
     private List<EventTrackVo> eventTracking;
 
@@ -78,11 +79,11 @@ public class ArticleDTO {
         this.voteNegtiveCount = voteNegtiveCount;
     }
 
-    public String getCreateTime() {
+    public Date getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(String createTime) {
+    public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
 

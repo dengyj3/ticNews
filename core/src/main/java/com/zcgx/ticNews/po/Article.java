@@ -1,6 +1,7 @@
 package com.zcgx.ticNews.po;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "tbl_article_list")
@@ -11,13 +12,22 @@ public class Article {
     private String title;
     private String summary;
     private String content;
-    private String createTime;
-    private String updateTime;
+    private Date createTime = new Date();
+    private Date updateTime = new Date();
     private String url;
     private String votePositiveName;
     private long votePositiveCount;
     private String voteNegtiveName;
     private long voteNegtiveCount;
+    private String source;
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
 
     public long getId() {
         return id;
@@ -44,19 +54,19 @@ public class Article {
         this.content = content;
     }
 
-    public String getCreateTime() {
+    public Date getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(String createTime) {
+    public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
 
-    public String getUpdateTime() {
+    public Date getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(String updateTime) {
+    public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
 
@@ -122,6 +132,7 @@ public class Article {
                 ", votePositiveCount=" + votePositiveCount +
                 ", voteNegtiveName='" + voteNegtiveName + '\'' +
                 ", voteNegtiveCount=" + voteNegtiveCount +
+                ", source='" + source + '\'' +
                 '}';
     }
 }

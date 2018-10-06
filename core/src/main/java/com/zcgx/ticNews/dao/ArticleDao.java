@@ -15,7 +15,7 @@ import java.util.List;
  */
 public interface ArticleDao extends JpaRepository<Article, Long>, JpaSpecificationExecutor<Article> {
 
-    @Query(value = "select * from tic.tbl_article_list order by id desc limit ?1,?2", nativeQuery = true)
+    @Query(value = "select * from tic.tbl_article_list order by id desc limit (?1-1)*10,?2", nativeQuery = true)
     List<Article> findAll(int pageNo, int pageSize);
     @Query(value = "select * from tic.tbl_article_list where id=?1", nativeQuery = true)
     Article findById(long id);

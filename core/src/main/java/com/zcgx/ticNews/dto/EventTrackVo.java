@@ -1,10 +1,12 @@
 package com.zcgx.ticNews.dto;
 
+import java.util.Date;
+
 public class EventTrackVo {
     private long id;
     private String title;
     private String url;
-    private String createTime;
+    private Date createTime;
 
     public long getId() {
         return id;
@@ -30,11 +32,11 @@ public class EventTrackVo {
         this.url = url;
     }
 
-    public String getCreateTime() {
+    public Date getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(String createTime) {
+    public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
 }
