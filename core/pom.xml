@@ -11,7 +11,10 @@
 
     <artifactId>core</artifactId>
     <name>ticNews</name>
-
+    <properties>
+        <!--properties节点中设置docker镜像的前缀“springboot”-->
+        <docker.image.prefix>springboot</docker.image.prefix>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -91,6 +94,26 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+            <!--加入maven插件“docker-maven-plugin”-->
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <!--<version>0.2.3</version>-->
+                <version>0.4.11</version>
+                <configuration>
+                    <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
+                    <dockerDirectory>src/main/docker</dockerDirectory>
+                    <resources>
+                        <resource>
+                            <targetPath>/</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <include>${project.build.finalName}.jar</include>
+                        </resource>
+                    </resources>
+                </configuration>
+            </plugin>
+
+
         </plugins>
     </build>
 
