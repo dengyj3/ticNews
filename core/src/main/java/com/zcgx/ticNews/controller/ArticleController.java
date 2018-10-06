@@ -24,7 +24,9 @@ public class ArticleController {
     public Response<PageList<ArticleDTO>> queryArticleList(@RequestParam(required = true) int pageNo, @RequestParam(required = true) int pageSize){
         try {
             if (pageNo < 1){
-                pageNo = 1;
+                pageNo = 0 * pageSize;
+            }else {
+                pageNo = (pageNo-1) * pageSize;
             }
             return articleService.queryArticleList(pageNo, pageSize);
         }catch (Exception e){

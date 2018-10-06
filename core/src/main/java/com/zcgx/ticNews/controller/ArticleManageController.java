@@ -104,6 +104,7 @@ public class ArticleManageController {
     public Response<String> deleteArticle(@RequestParam(required = true) long id){
         try{
             articleService.deleteArticle(id);
+            tagArticleRelationService.deleteTagArticleRelationByArticleId(id);
             return Response.ok("SUCCESS");
         }catch (Exception e){
             logger.error("删除文章失败! " + e);

@@ -9,4 +9,7 @@ public interface TagArticleRelationService {
     int deleteTagArticleRelation(long id);
     TagArticleRelation modifyTagArticleRelation(TagArticleRelation tagArticleRelation);
     List<TagArticleRelation> queryTagArticleRelation(long articleId);
+
+    List<TagArticleRelation> deleteTagArticleRelationByArticleId(long articleId);
+    List<TagArticleRelation> deleteTagArticleRelationByTagId(long tagId);
 }

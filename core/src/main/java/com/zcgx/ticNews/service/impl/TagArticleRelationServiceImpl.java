@@ -33,4 +33,14 @@ public class TagArticleRelationServiceImpl implements TagArticleRelationService 
     public List<TagArticleRelation> queryTagArticleRelation(long articleId) {
         return tagArticleRelationDao.findByArticleId(articleId);
     }
+
+    @Override
+    public List<TagArticleRelation> deleteTagArticleRelationByArticleId(long articleId) {
+        return tagArticleRelationDao.deleteByArticleId(articleId);
+    }
+
+    @Override
+    public List<TagArticleRelation> deleteTagArticleRelationByTagId(long tagId) {
+        return tagArticleRelationDao.deleteByTagId(tagId);
+    }
 }
