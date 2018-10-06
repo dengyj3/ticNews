@@ -1,12 +1,9 @@
 package com.zcgx.ticNews.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.zcgx.ticNews.dto.ArticleDTO;
-import com.zcgx.ticNews.po.Article;
 import com.zcgx.ticNews.service.ArticleService;
 import com.zcgx.ticNews.util.PageList;
 import com.zcgx.ticNews.util.Response;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -14,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-@Api("文章相关接口API")
 @RestController
 @RequestMapping("/article")
 public class ArticleController {

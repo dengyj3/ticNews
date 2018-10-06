@@ -46,9 +46,9 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
         String respContent = "请求处理异常，请稍候重试！";
         try {
             Map<String, String> requestMap = MessageUtil.parseXml(request);
-            String fromUserName = requestMap.get("fromUserName");
-            String toUserName = requestMap.get("toUserName");
-            String msgType = requestMap.get("msgType");
+            String fromUserName = requestMap.get("FromUserName");
+            String toUserName = requestMap.get("ToUserName");
+            String msgType = requestMap.get("MsgType");
             TextMessage textMessage = new TextMessage();
             textMessage.setToUserName(fromUserName);
             textMessage.setFromUserName(toUserName);
@@ -63,7 +63,7 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
             newsMessage.setFuncFlag(0);
 
             List<Article> articleList = new ArrayList<>();
-            String content = requestMap.get("content");
+            String content = requestMap.get("Content");
             if (msgType.equals(MessageUtil.REQ_MESSAGE_TYPE_TEXT)){
                 if (isQqFace(content)){
                     respContent = content;

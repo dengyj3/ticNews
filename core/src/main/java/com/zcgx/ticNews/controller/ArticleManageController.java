@@ -8,7 +8,6 @@ import com.zcgx.ticNews.service.ArticleService;
 import com.zcgx.ticNews.service.TagArticleRelationService;
 import com.zcgx.ticNews.service.TagService;
 import com.zcgx.ticNews.util.Response;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 
-@Api("文章管理接口API")
 @RestController
 @RequestMapping("/manage")
 public class ArticleManageController {
