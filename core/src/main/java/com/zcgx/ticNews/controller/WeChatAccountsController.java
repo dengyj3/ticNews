@@ -3,9 +3,11 @@ package com.zcgx.ticNews.controller;
 import com.zcgx.ticNews.dto.ArticleDTO;
 import com.zcgx.ticNews.util.PageList;
 import com.zcgx.ticNews.util.Response;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,7 +25,8 @@ public class WeChatAccountsController {
      * 自定义token, 用作生成签名,从而验证安全性
      * */
     private final String TOKEN = "springbird";
-    @RequestMapping("/create")
+    @ApiOperation(value = "测试token", notes = "测试token")
+    @RequestMapping(value = "/create",method = RequestMethod.GET)
     public Response<String> create(@RequestParam("signature") String signature,
                                    @RequestParam("timestamp") String timestamp,
                                    @RequestParam("nonce") String nonce,

@@ -1,16 +1,15 @@
 package com.zcgx.ticNews.controller;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.zcgx.ticNews.dto.ArticleDTO;
 import com.zcgx.ticNews.po.Article;
 import com.zcgx.ticNews.po.Tag;
 import com.zcgx.ticNews.po.TagArticleRelation;
 import com.zcgx.ticNews.service.ArticleService;
 import com.zcgx.ticNews.service.TagArticleRelationService;
 import com.zcgx.ticNews.service.TagService;
-import com.zcgx.ticNews.util.PageList;
 import com.zcgx.ticNews.util.Response;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 
+@Api("文章管理接口API")
 @RestController
 @RequestMapping("/manage")
 public class ArticleManageController {
@@ -31,6 +31,8 @@ public class ArticleManageController {
     @Autowired
     TagArticleRelationService tagArticleRelationService;
 
+    @ApiOperation(value = "添加文章")
+    @ApiImplicitParam(name = "jsonObject", value = "Article实体列表", required = true, dataType = "Article", example = "{\"summary\":\"summaryTest\",\"voteNegtiveCount\":0,\"source\":\"resourceTest\",\"votePositiveCount\":1,\"title\":\"titleTest\",\"votePositiveName\":\"赞同\",\"content\":\"contentTest\",\"url\":\"http://www.baidu.com\",\"voteNegtiveName\":\"不赞同\",\"tags\":[\"检测\",\"认证\"]}")
     @RequestMapping(value = "/addArticle", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public Response<String> addArticle(@RequestBody JSONObject jsonObject){
         try {
@@ -65,8 +67,8 @@ public class ArticleManageController {
             return Response.error("新增文章失败! " + e);
         }
     }
-
-    @RequestMapping(value = "/getArticle")
+    @ApiOperation(value = "获取文章")
+    @RequestMapping(value = "/getArticle", method = RequestMethod.GET)
     public Response<Article> getArticle(@RequestParam(required = true) long id){
         try {
             Article article = articleService.queryArticle(id);
@@ -77,6 +79,7 @@ public class ArticleManageController {
         }
     }
 
+    @ApiOperation(value = "修改文章")
     @RequestMapping(value = "/updateArticle", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public Response<String> updateArticle(@RequestBody JSONObject jsonObject){
         try {
@@ -101,6 +104,8 @@ public class ArticleManageController {
         }
     }
 
+    @ApiOperation(value = "删除文章")
+    @RequestMapping(value = "/deleteArticle", method = RequestMethod.POST)
     public Response<String> deleteArticle(@RequestParam(required = true) long id){
         try{
             articleService.deleteArticle(id);
