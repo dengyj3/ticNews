@@ -6,7 +6,7 @@ public class EventTrackVo {
     private long id;
     private String title;
     private String url;
-    private Date createTime;
+    private String createTime;
 
     public long getId() {
         return id;
@@ -32,11 +32,11 @@ public class EventTrackVo {
         this.url = url;
     }
 
-    public Date getCreateTime() {
+    public String getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(String createTime) {
         this.createTime = createTime;
     }
 }

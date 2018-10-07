@@ -6,6 +6,7 @@ import com.zcgx.ticNews.dto.ArticleDTO;
 import com.zcgx.ticNews.dto.EventTrackVo;
 import com.zcgx.ticNews.po.Article;
 import com.zcgx.ticNews.service.ArticleService;
+import com.zcgx.ticNews.util.DateUtils;
 import com.zcgx.ticNews.util.PageList;
 import com.zcgx.ticNews.util.Response;
 import org.slf4j.Logger;
@@ -32,7 +33,7 @@ public class ArticleServiceImpl implements ArticleService {
         articleList.stream().forEach(article -> {
             ArticleDTO articleDTO = new ArticleDTO();
             articleDTO.setId(article.getId());
-            articleDTO.setCreateTime(article.getCreateTime());
+            articleDTO.setCreateTime(DateUtils.getDateStr(article.getCreateTime()));
             articleDTO.setSummary(article.getSummary());
             articleDTO.setTitle(article.getTitle());
             articleDTO.setVotePositiveName(article.getVotePositiveName());
@@ -66,7 +67,7 @@ public class ArticleServiceImpl implements ArticleService {
                 eventTrackVo.setId(article1.getId());
                 eventTrackVo.setTitle(article1.getTitle());
                 eventTrackVo.setUrl(article1.getUrl());
-                eventTrackVo.setCreateTime(article1.getCreateTime());
+                eventTrackVo.setCreateTime(DateUtils.getDateStr(article1.getCreateTime()));
                 eventTracking.add(eventTrackVo);
             });
             articleDTO.setEventTracking(eventTracking);
