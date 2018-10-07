@@ -13,16 +13,16 @@ import java.util.List;
  *
  */
 public interface TagArticleRelationDao extends JpaRepository<TagArticleRelation, Long>, JpaSpecificationExecutor<TagArticleRelation> {
-    @Query(value = "select * from tic.tbl_article_tag where article_id=?1", nativeQuery = true)
+    @Query(value = "select * from jianbao.tbl_article_tag where article_id=?1", nativeQuery = true)
     List<TagArticleRelation> findByArticleId(long articleId);
 
     @Transactional
     @Modifying
-    @Query(value = "delete from tic.tbl_article_tag where article_id=?1", nativeQuery = true)
+    @Query(value = "delete from jianbao.tbl_article_tag where article_id=?1", nativeQuery = true)
     List<TagArticleRelation> deleteByArticleId(long articleId);
 
     @Transactional
     @Modifying
-    @Query(value = "delete from tic.tbl_article_tag where tag_id=?1", nativeQuery = true)
+    @Query(value = "delete from jianbao.tbl_article_tag where tag_id=?1", nativeQuery = true)
     List<TagArticleRelation> deleteByTagId(long tagId);
 }
