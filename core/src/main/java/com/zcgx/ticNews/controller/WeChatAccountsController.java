@@ -1,14 +1,17 @@
 package com.zcgx.ticNews.controller;
 
+import com.zcgx.ticNews.service.WeChatCoreService;
 import com.zcgx.ticNews.util.Response;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -17,13 +20,16 @@ import java.util.Arrays;
 public class WeChatAccountsController {
     private final static Logger logger = LoggerFactory.getLogger(WeChatAccountsController.class);
 
+    @Autowired
+    WeChatCoreService weChatCoreService;
+
     /*
      * 自定义token, 用作生成签名,从而验证安全性
      * */
     private final String TOKEN = "springbird";
     @ApiOperation(value = "测试token", notes = "测试token")
-    @RequestMapping(value = "/create",method = RequestMethod.GET)
-    public Response<String> create(@RequestParam("signature") String signature,
+    @RequestMapping(value = "/login",method = RequestMethod.GET)
+    public String login(@RequestParam("signature") String signature,
                                    @RequestParam("timestamp") String timestamp,
                                    @RequestParam("nonce") String nonce,
                                    @RequestParam("echostr") String echostr){
@@ -42,11 +48,11 @@ public class WeChatAccountsController {
          * 校验微信服务器传递过来的签名 和  加密后的字符串是否一致, 若一致则签名通过
          */
         if(!"".equals(signature) && !"".equals(mySignature) && signature.equals(mySignature)){
-            System.out.println("-----签名校验通过-----");
-            return Response.ok("SUCCESS");
+            logger.info("-----签名校验通过-----");
+            return echostr;
         }else {
-            System.out.println("-----校验签名失败-----");
-            return Response.error("校验签名失败");
+            logger.error("-----校验签名失败-----");
+            return "校验签名失败: " + echostr;
         }
     }
 
@@ -94,7 +100,12 @@ public class WeChatAccountsController {
         }
         return "";
     }
-
-
+    @ApiOperation(value = "测试token", notes = "测试token")
+    @RequestMapping(value = "/process",method = RequestMethod.GET)
+    public Response<String> processRequest(HttpServletRequest request){
+        logger.info("enter process......");
+        String resp = weChatCoreService.processRequest(request);
+        return Response.ok("SUCCESS");
+    }
 
 }
