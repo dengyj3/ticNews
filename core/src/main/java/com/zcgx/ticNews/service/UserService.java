@@ -17,4 +17,9 @@ public interface UserService {
      */
     List<User> findByScribeNewspaper();
 
+    /**
+     * 根据unionid判断用户表中用户是否存在
+     */
+    boolean isExist(String unionid);
+
 }

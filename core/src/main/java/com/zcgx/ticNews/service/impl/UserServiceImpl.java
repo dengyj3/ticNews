@@ -23,4 +23,13 @@ public class UserServiceImpl implements UserService {
     public List<User> findByScribeNewspaper() {
         return userDao.findBySubscribeNewspaper();
     }
+
+    @Override
+    public boolean isExist(String unionid) {
+        User user = userDao.findByUnionId(unionid);
+        if (user != null){
+            return true;
+        }
+        return false;
+    }
 }

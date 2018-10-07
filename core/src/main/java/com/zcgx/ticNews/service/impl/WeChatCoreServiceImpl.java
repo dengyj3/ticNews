@@ -1,11 +1,17 @@
 package com.zcgx.ticNews.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.zcgx.ticNews.message.resp.Article;
 import com.zcgx.ticNews.message.resp.NewsMessage;
 import com.zcgx.ticNews.message.resp.TextMessage;
+import com.zcgx.ticNews.message.util.MessageModelUtil;
+import com.zcgx.ticNews.po.User;
+import com.zcgx.ticNews.service.UserService;
 import com.zcgx.ticNews.service.WeChatCoreService;
 import com.zcgx.ticNews.util.HttpBaseUtils;
-import com.zcgx.ticNews.util.MessageUtil;
+import com.zcgx.ticNews.message.util.MessageUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,180 +34,127 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
     private static Logger logger = LoggerFactory.getLogger(WeChatCoreServiceImpl.class);
     @Autowired
     private RestTemplate restTemplate;
+    @Autowired
+    private UserService userService;
 
-    @Value("${wx.appid:wx18227c539a8494aa}")
-    private String appId;
-    @Value("${wx.redirect_uri:http://tey34y.natappfree.cc/ticNews/article/queryArticle?pageNo=0&pageSize=10}")
-    private String redirectUri = "";
+//    @Value("${wx.appId}")
+    private String appId = "";
 
-    private String responseType = "code";
-
-    //（snsapi_base ，不弹出授权页面，直接跳转，只能获取用户openid），snsapi_userinfo 弹出授权页面，可通过openid拿到昵称、性别、所在地。）
-    @Value("{wx.scope:snsapi_base}")
-    private String scope;
-    @Value("{wx.secret:73ac773580b51790b33d76dd1704c4e4}")
-    private String secret;
+//    @Value("${wx.appKey}")
+    private String appKey = "";
 
     @Override
     public String processRequest(HttpServletRequest request) {
         String respMessage = null;
         String respContent = "请求处理异常，请稍候重试！";
+        TextMessage textMessage = new TextMessage();
         try {
             Map<String, String> requestMap = MessageUtil.parseXml(request);
             String fromUserName = requestMap.get("FromUserName");
             String toUserName = requestMap.get("ToUserName");
             String msgType = requestMap.get("MsgType");
-            TextMessage textMessage = new TextMessage();
             textMessage.setToUserName(fromUserName);
             textMessage.setFromUserName(toUserName);
             textMessage.setCreateTime(new Date().getTime());
             textMessage.setMsgType(MessageUtil.RESP_MESSAGE_TYPE_TEXT);
-            textMessage.setFuncFlag(0);
-            NewsMessage newsMessage = new NewsMessage();
-            newsMessage.setToUserName(fromUserName);
-            newsMessage.setFromUserName(toUserName);
-            newsMessage.setCreateTime(new Date().getTime());
-            newsMessage.setMsgType(MessageUtil.RESP_MESSAGE_TYPE_NEWS);
-            newsMessage.setFuncFlag(0);
 
-            List<Article> articleList = new ArrayList<>();
-            String content = requestMap.get("Content");
-            if (msgType.equals(MessageUtil.REQ_MESSAGE_TYPE_TEXT)){
-                if (isQqFace(content)){
-                    respContent = content;
-                    textMessage.setContent(respContent);
-                    respMessage = MessageUtil.textMessageToXml(textMessage);
-                }else {
-                    switch (content){
-                        case "1":{
-                            StringBuffer buffer = new StringBuffer();
-                            buffer.append("");
-                            respContent = String.valueOf(buffer);
-                            textMessage.setContent(respContent);
-                            respMessage = MessageUtil.textMessageToXml(textMessage);
-                        }
-                    }
+            if (msgType.equals(MessageUtil.REQ_MESSAGE_TYPE_TEXT)) {
+                textMessage.setContent(respContent);
+                respMessage = MessageUtil.textMessageToXml(textMessage);
+            } else if (msgType.equals(MessageUtil.REQ_MESSAGE_TYPE_IMAGE)) {    // 图片消息
+                respContent = "您发送的是图片消息！";
+                textMessage.setContent(respContent);
+                respMessage = MessageUtil.textMessageToXml(textMessage);
+            } else if (msgType.equals(MessageUtil.REQ_MESSAGE_TYPE_VOICE)) {
+                respContent = "您发送的是语音消息！";
+                textMessage.setContent(respContent);
+                respMessage = MessageUtil.textMessageToXml(textMessage);
+            }else if (msgType.equals(MessageUtil.REQ_MESSAGE_TYPE_VIDEO)) {
+                respContent = "您发送的是视频消息！";
+                textMessage.setContent(respContent);
+                respMessage = MessageUtil.textMessageToXml(textMessage);
+            }	else if (msgType.equals(MessageUtil.REQ_MESSAGE_TYPE_LOCATION)) { 					// 地理位置消息
+                respContent = "您发送的是地理位置消息！";
+                textMessage.setContent(respContent);
+                respMessage = MessageUtil.textMessageToXml(textMessage);
+            }	else if (msgType.equals(MessageUtil.REQ_MESSAGE_TYPE_LINK)) { 					// 链接消息
+                respContent = "您发送的是链接消息！";
+                textMessage.setContent(respContent);
+                respMessage = MessageUtil.textMessageToXml(textMessage);
+            }	else if (msgType.equals(MessageUtil.REQ_MESSAGE_TYPE_EVENT)) { 					// 事件推送(当用户主动点击菜单，或者扫面二维码等事件)
+                // 事件类型
+                String  eventType =requestMap.get("Event");
+                System.out.println("eventType------>"+eventType);
+                // 关注
+                if (eventType.equals(MessageUtil.EVENT_TYPE_SUBSCRIBE)){// 用户关注时保存用户信息
+                    getUserInfo("", fromUserName);
+                    // TODO: 保存用户信息
+                    respMessage = MessageModelUtil.followResponseMessageModel(textMessage);
+                }else if (eventType.equals(MessageUtil.EVENT_TYPE_UNSUBSCRIBE)) {// 取消关注
+                    // TODO: 把用户表中的状态置为未订阅
+//                    userService;
+                    MessageModelUtil.cancelAttention("",fromUserName);
+            	}else if (eventType.equals(MessageUtil.EVENT_TYPE_SCAN)) {              	// 扫描带参数二维码
+                    logger.info("扫描带参数二维码");
+                }else if (eventType.equals(MessageUtil.EVENT_TYPE_LOCATION)) {             	// 上报地理位置
+                    logger.info("上报地理位置");
+                } else if (eventType.equals(MessageUtil.EVENT_TYPE_CLICK)) {// 自定义菜单（点击菜单拉取消息）
+                    // 事件KEY值，与创建自定义菜单时指定的KEY值对应
+                    String eventKey=requestMap.get("EventKey");
+                    logger.info("eventKey------->"+eventKey);
+                    // TODO: 判断用户是否存在，存在的话，更新数据库，不存在的话保存用户信息
+                } else if (eventType.equals(MessageUtil.EVENT_TYPE_VIEW)) {// 自定义菜单（(自定义菜单URl视图)）
+                    logger.info("处理自定义菜单URI视图");
+                    // TODO: 判断用户是否存在，存在的话，更新数据库，不存在的话保存用户信息
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("系统出错");
+            respMessage = null;
+        } finally{
+            if (null == respMessage) {
+                respMessage = MessageModelUtil.systemErrorResponseMessageModel(textMessage);
+            }
+            return respMessage;
+        }
+    }
+
+    @Override
+    public String getAccessToken() {
+        if (StringUtils.isBlank(appId)){
+            logger.error("appid is null");
+            return "error: appid is null";
+        }
+        if (StringUtils.isBlank(appKey)){
+            logger.error("appKey is null");
+            return "error: appKey is null";
+        }
+        String url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid="+appId+"&secret="+appKey;
+        String result = HttpBaseUtils.getRequestJson(restTemplate, url, null);
+        if (StringUtils.isNotBlank(result)){
+            JSONObject jsonObject = (JSONObject) JSON.parse(result);
+            String accessToken = jsonObject.getString("access_token");
+            return accessToken;
         }
         return null;
     }
 
     @Override
-    public String getCode() {
-        /**
-         * --------------------用户授权并获取code
-         *
-         * 参数说明
-         * appid=APPID（公众号唯一标识）
-         * redirect_uri=REDIRECT_URI（授权后重定向的回调链接地址）
-         * response_type=code（返回类型，无需更改）
-         * scope=SCOPE（snsapi_base ，不弹出授权页面，直接跳转，只能获取用户openid），snsapi_userinfo 弹出授权页面，可通过openid拿到昵称、性别、所在地。）
-         * state=STATE（重定向后会带上state参数，开发者可以填写任意参数值）
-         * #wechat_redirect（无需更改）
-         *
-         * 地址实例（虽是测试号，但我还是隐藏部分信息）红色字体需要根据实际更改。
-         * https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxe5809c42e6c00d22&redirect_uri=http://dingcanphp.applinzi.com/getUserInfo.php&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect
-         *
-         * 返回结果（code的值，不一定是显示在浏览器界面上的，具体看你的redirect_uri中的文件）
-         * 061h4k8Z1G7AhY0025bZ1nbh8Z1h4k8Q
-         */
-        String url = null;
-        try {
-            url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appId+"&redirect_uri="+ URLEncoder.encode(redirectUri,"utf-8")+"&secret="+secret+"&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect";
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        logger.info("url is : " + url);
-        String result = HttpBaseUtils.getRequestJson(restTemplate,url, null);
-        return result;
-    }
-
-    @Override
-    public String getAccessToken(String code) {
-        /**
-         * -----------------使用code换取access_token
-         *
-         * 参数说明
-         * appid=APPID（公众号唯一标识）
-         * secret=SECRET（公众号的appsecret）
-         * code=CODE（第一步获取的code参数）
-         * grant_type=authorization_code（无需更改）
-         *
-         * 地址实例（虽是测试号，但我还是隐藏部分信息）红色字体需要根据实际更改。
-         * https://api.weixin.qq.com/sns/oauth2/access_token?appid=wxe5809c42e6c00d22&secret=5444ba1b31666f6052e9c703f906368b&code=061h4k8Z1G7AhY0025bZ1nbh8Z1h4k8Q&grant_type=authorization_code
-         *
-         * 返回结果（json格式数据）
-         * {
-         * "access_token": "e1nYJFpZuehfQH1buzHFZLb7onqs_wT1cudSdy9HRlnaMXFtFpRMNFOA0euK6UxPcItrSNbAQVcXDdthbLJYX0MdH1p7-tkZSKuGqBCxVc0",
-         * "expires_in": 7200,
-         * "refresh_token": "0iVsXn4O1rBCASbO7hx8VNVUVFM1RP2Q4xS0giegd4jlIsJYOjTJNZ0b4Dsh_xcoB02ZZ3bt0WH0a47LvjIEPjWUnESJCZyl6EtY_xYZdVs",
-         * "openid": "o47Fa0mp9SRTf3eiKmqWm69BjG_8",
-         * "scope": "snsapi_userinfo"
-         * }
-         *
-         * 结果解释
-         * access_token	网页授权接口调用凭证,注意：此access_token与基础支持的access_token不同
-         * expires_in	access_token接口调用凭证超时时间，单位（秒）
-         * refresh_token	用户刷新access_token
-         * openid	用户唯一标识，请注意，在未关注公众号时，用户访问公众号的网页，也会产生一个用户和公众号唯一的OpenID
-         * scope	用户授权的作用域，使用逗号（,）分隔
-         */
-        String url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="+appId+"&secret="+secret+"&code="+code+"&grant_type=authorization_code";
-        String result = HttpBaseUtils.getRequestJson(restTemplate,url, null);
-        return result;
-    }
-
-    @Override
-    public String getUserInfo(String accessToken, String openId) {
-        /**
-         * 参数说明
-         * access_token=ACCESS_TOKEN（第2步获取的access_token参数，此access_token与基础支持的access_token不同）
-         * openid=OPENID（第2步获取的openid参数）
-         * langlang=zh_CN	返回国家地区语言版本，zh_CN 简体，zh_TW 繁体，en 英语
-         *
-         * 地址实例（虽是测试号，但我还是隐藏部分信息）红色字体需要根据实际更改。
-         * https://api.weixin.qq.com/sns/userinfo?access_token=e1nYJFpZuehfQH1buzHFZLb7onqs_wT1cudSdy9HRlnaMXFtFpRMNFOA0euK6UxPcItrSNbAQVcXDdthbLJYX0MdH1p7-tkZSKuGqBCxVc0&openid=o47Fa0mp9SRTf3eiKmqWm69BjG_8&lang=zh_CN
-         *
-         * 返回结果（json格式数据）
-         * {
-         * "openid": "o47Fa0mp9SRTf3eiKmqWm69BjG_8",
-         * "nickname": "齐齐",
-         * "sex": 0,
-         * "language": "zh_CN",
-         * "city": "Shaoxing",
-         * "province": "Zhejiang",
-         * "country": "CN",
-         * "headimgurl": "http://wx.qlogo.cn/mmhead/Q3auHgzwzM6kqfcibzzVc8MDGBch53mIgJjWrbKSwkBnzcsWBOMOGlg/0",
-         * "privilege": []
-         * }
-         *
-         * 结果解释
-         * openid	用户的唯一标识
-         * nickname	用户昵称
-         * sex	用户的性别，值为1时是男性，值为2时是女性，值为0时是未知
-         * province	用户个人资料填写的省份
-         * city	普通用户个人资料填写的城市
-         * country	国家，如中国为CN
-         * headimgurl	用户头像，最后一个数值代表正方形头像大小（有0、46、64、96、132数值可选，0代表640*640正方形头像），用户没有头像时该项为空
-         * privilege	用户特权信息，json 数组，如微信沃卡用户为（chinaunicom）
-         */
-        String url = "https://api.weixin.qq.com/sns/userinfo?access_token="+accessToken+"&openid="+openId+"&lang=zh_CN";
+    public String getUserInfo(String accessToken, String openid) {
+        String url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token="+accessToken+"&openid="+openid+"&lang=zh_CN";
         String result = HttpBaseUtils.getRequestJson(restTemplate, url, null);
-        return result;
+        if (StringUtils.isNotBlank(result)){
+            JSONObject jsonObject = (JSONObject) JSON.parse(result);
+            User user = new User();
+            user.setOpenid(openid);
+            user.setSubscribe(jsonObject.getInteger("subscribe"));
+            user.setRemark(jsonObject.getString("remark"));
+            user.setUnionid(jsonObject.getString("unionid"));
+            userService.saveUser(user);
+            return result;
+        }
+        return null;
     }
 
-    public static boolean isQqFace(String content){
-        boolean result = false;
-        // TODO: 增加表情的正则表达式
-        String qqFaceRegex = "/::\\)";
-        Pattern p = Pattern.compile(qqFaceRegex);
-        Matcher m = p.matcher(content);
-        if (m.matches()){
-            result = true;
-        }
-        return result;
-    }
 }

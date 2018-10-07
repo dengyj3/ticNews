@@ -1,13 +1,13 @@
 package com.zcgx.ticNews.message.req;
 
 public class TextMessage extends BaseMessage {
-    private String content;
+    private String Content;
 
     public String getContent() {
-        return content;
+        return Content;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setContent(String Content) {
+        this.Content = Content;
     }
 }
