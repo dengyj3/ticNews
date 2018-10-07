@@ -13,6 +13,12 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public Tag addTag(Tag tag) {
+        Tag tag1 = tagDao.findByTagName(tag.getTagName());
+        if (tag1 != null){
+            if (tag1.getTagName().equals(tag.getTagName())){
+                return tag1;
+            }
+        }
         tag = tagDao.saveAndFlush(tag);
         return tag;
     }

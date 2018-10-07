@@ -2,7 +2,6 @@ package com.zcgx.ticNews.service;
 
 import com.zcgx.ticNews.po.Tag;
 
-import java.util.List;
 
 public interface TagService {
     Tag addTag(Tag tag);

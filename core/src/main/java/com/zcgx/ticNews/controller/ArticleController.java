@@ -29,6 +29,7 @@ public class ArticleController {
             }
             return articleService.queryArticleList(pageNo, pageSize);
         }catch (Exception e){
+            e.printStackTrace();
             logger.error("获取文章列表失败! " + e);
             return Response.error("获取文章列表失败! " + e);
         }

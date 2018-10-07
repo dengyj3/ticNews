@@ -11,4 +11,6 @@ import org.springframework.data.jpa.repository.Query;
 public interface TagDao extends JpaRepository<Tag, Long>, JpaSpecificationExecutor<Tag> {
     @Query(value = "select * from tic.tbl_tag where id=?1", nativeQuery = true)
     Tag findById(long id);
+    @Query(value = "select * from tic.tbl_tag where tag_name=?1", nativeQuery = true)
+    Tag findByTagName(String tagName);
 }

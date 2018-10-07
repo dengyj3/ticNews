@@ -51,7 +51,7 @@ public class ArticleManageController {
                 tagList.stream().forEach(t -> {
                     Tag tag = new Tag();
                     tag.setTagName(t);
-                    tagService.addTag(tag);
+                    tag = tagService.addTag(tag);
                     TagArticleRelation tagArticleRelation = new TagArticleRelation();
                     tagArticleRelation.setArticleId(article.getId());
                     tagArticleRelation.setTagId(tag.getId());
