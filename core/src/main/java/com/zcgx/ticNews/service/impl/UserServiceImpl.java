@@ -30,10 +30,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean isExist(String unionid) {
-        User user = userDao.findByUnionId(unionid);
+        User user = findByUnionId(unionid);
         if (user != null){
             return true;
         }
         return false;
+    }
+
+    @Override
+    public User findByUnionId(String unionid) {
+        return userDao.findByUnionId(unionid);
     }
 }

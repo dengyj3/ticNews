@@ -22,4 +22,11 @@ public interface UserService {
      */
     boolean isExist(String unionid);
 
+    /**
+     * 根据unionid返回用户信息
+     * @param unionid
+     * @return
+     */
+    User findByUnionId(String unionid);
+
 }

@@ -20,18 +20,32 @@ public class UserController {
     UserService userService;
 
     @ApiOperation(value = "添加用户")
-    @ApiImplicitParam(name = "userInfo", value = "小程序用户信息", required = true, dataType = "User", example = "{\"summary\":\"summaryTest\",\"voteNegtiveCount\":0,\"source\":\"resourceTest\",\"votePositiveCount\":1,\"title\":\"titleTest\",\"votePositiveName\":\"赞同\",\"content\":\"contentTest\",\"url\":\"http://www.baidu.com\",\"voteNegtiveName\":\"不赞同\",\"tags\":[\"检测\",\"认证\"]}")
+    @ApiImplicitParam(name = "userInfo", value = "小程序用户信息", required = true, dataType = "User")
     @RequestMapping(value = "/saveUser", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public Response<String> saveUser(@RequestBody JSONObject userInfo){
         try {
             User user = new User();
-            user.setOpenid(userInfo.getString("openid"));
-            user.setSubscribe(userInfo.getInteger("subscribe"));
-            user.setRemark(userInfo.getString("remark"));
-            user.setUnionid(userInfo.getString("unionid"));
-            user.setMpOpenid(userInfo.getString("mpOpenid"));
-            user.setSubscribeNewspaper(userInfo.getInteger("subscribeNewspaper"));
-            user.setUserSource(userInfo.getInteger("userSource"));
+            if (userInfo.containsKey("openid")) {
+                user.setOpenid(userInfo.getString("openid"));
+            }
+            if (userInfo.containsKey("subscribe")) {
+                user.setSubscribe(userInfo.getInteger("subscribe"));
+            }
+            if (userInfo.containsKey("remark")) {
+                user.setRemark(userInfo.getString("remark"));
+            }
+            if (userInfo.containsKey("unionid")) {
+                user.setUnionid(userInfo.getString("unionid"));
+            }
+            if (userInfo.containsKey("mpOpenid")) {
+                user.setMpOpenid(userInfo.getString("mpOpenid"));
+            }
+            if (userInfo.containsKey("subscribeNewspaper")) {
+                user.setSubscribeNewspaper(userInfo.getInteger("subscribeNewspaper"));
+            }
+            if (userInfo.containsKey("userSource")) {
+                user.setUserSource(userInfo.getInteger("userSource"));
+            }
             userService.saveUser(user);
             return Response.ok("SUCCESS");
         }catch (Exception e){
@@ -41,4 +55,17 @@ public class UserController {
         }
     }
 
+    @ApiOperation(value = "根据unionid查询用户信息")
+    @ApiImplicitParam(name = "unionid", value = "根据unionid查询用户信息", required = true, dataType = "String")
+    @RequestMapping(value = "/queryUser", method = RequestMethod.GET)
+    public Response<User> queryUser(@RequestParam(required = true) String unionid){
+        try {
+            User user = userService.findByUnionId(unionid);
+            return Response.ok(user);
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.error("查询用户失败! " + e);
+            return Response.error("查询用户失败! " + e);
+        }
+    }
 }
