@@ -29,4 +29,11 @@ public interface UserService {
      */
     User findByUnionId(String unionid);
 
+    /**
+     * 检查用户是否订阅
+     * @param openid
+     * @return
+     */
+    boolean checkIsScribe(String openid);
+
 }

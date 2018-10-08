@@ -22,7 +22,7 @@ public class UserController {
     @ApiOperation(value = "添加用户")
     @ApiImplicitParam(name = "userInfo", value = "小程序用户信息", required = true, dataType = "User")
     @RequestMapping(value = "/saveUser", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-    public Response<String> saveUser(@RequestBody JSONObject userInfo){
+    public Response<User> saveUser(@RequestBody JSONObject userInfo){
         try {
             User user = new User();
             if (userInfo.containsKey("openid")) {
@@ -30,6 +30,10 @@ public class UserController {
             }
             if (userInfo.containsKey("subscribe")) {
                 user.setSubscribe(userInfo.getInteger("subscribe"));
+            }else {
+                if (userService.checkIsScribe(userInfo.getString("openid"))){
+                    user.setSubscribe(1);
+                }
             }
             if (userInfo.containsKey("remark")) {
                 user.setRemark(userInfo.getString("remark"));
@@ -47,7 +51,7 @@ public class UserController {
                 user.setUserSource(userInfo.getInteger("userSource"));
             }
             userService.saveUser(user);
-            return Response.ok("SUCCESS");
+            return Response.ok(user);
         }catch (Exception e){
             e.printStackTrace();
             logger.error("新增用户失败! " + e);

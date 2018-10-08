@@ -1,8 +1,11 @@
 package com.zcgx.ticNews.service.impl;
 
 import com.zcgx.ticNews.dao.UserDao;
+import com.zcgx.ticNews.message.util.MessageModelUtil;
 import com.zcgx.ticNews.po.User;
+import com.zcgx.ticNews.service.AccessTokenService;
 import com.zcgx.ticNews.service.UserService;
+import com.zcgx.ticNews.service.WeChatCoreService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,8 @@ public class UserServiceImpl implements UserService {
     private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     @Autowired
     UserDao userDao;
+    @Autowired
+    private WeChatCoreService weChatCoreService;
     @Override
     public void saveUser(User user) {
         String unionid = user.getUnionid();
@@ -40,5 +45,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByUnionId(String unionid) {
         return userDao.findByUnionId(unionid);
+    }
+
+    @Override
+    public boolean checkIsScribe(String openid) {
+        return MessageModelUtil.isAlreadyBinding(weChatCoreService.getAccessToken(),openid);
     }
 }
