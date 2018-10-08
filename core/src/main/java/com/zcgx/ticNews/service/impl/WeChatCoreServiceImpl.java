@@ -2,15 +2,17 @@ package com.zcgx.ticNews.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.zcgx.ticNews.message.resp.Article;
-import com.zcgx.ticNews.message.resp.NewsMessage;
 import com.zcgx.ticNews.message.resp.TextMessage;
 import com.zcgx.ticNews.message.util.MessageModelUtil;
+import com.zcgx.ticNews.po.AccessToken;
 import com.zcgx.ticNews.po.User;
+import com.zcgx.ticNews.service.AccessTokenService;
 import com.zcgx.ticNews.service.UserService;
 import com.zcgx.ticNews.service.WeChatCoreService;
+import com.zcgx.ticNews.util.DateUtils;
 import com.zcgx.ticNews.util.HttpBaseUtils;
 import com.zcgx.ticNews.message.util.MessageUtil;
+import com.zcgx.ticNews.util.WeixinUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,14 +22,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service("weChatCoreService")
 public class WeChatCoreServiceImpl implements WeChatCoreService {
@@ -37,10 +34,13 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
     @Autowired
     private UserService userService;
 
-//    @Value("${wx.appId}")
+    @Autowired
+    private AccessTokenService accessTokenService;
+
+    @Value("${wx.appId}")
     private String appId = "";
 
-//    @Value("${wx.appKey}")
+    @Value("${wx.appKey}")
     private String appKey = "";
 
     @Override
@@ -87,13 +87,11 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
                 System.out.println("eventType------>"+eventType);
                 // 关注
                 if (eventType.equals(MessageUtil.EVENT_TYPE_SUBSCRIBE)){// 用户关注时保存用户信息
-                    getUserInfo("", fromUserName);
-                    // TODO: 保存用户信息
-                    respMessage = MessageModelUtil.followResponseMessageModel(textMessage);
+                    getUserInfo(getAccessToken(), fromUserName);// 保存用户信息
+//                    respMessage = MessageModelUtil.followResponseMessageModel(textMessage);
                 }else if (eventType.equals(MessageUtil.EVENT_TYPE_UNSUBSCRIBE)) {// 取消关注
-                    // TODO: 把用户表中的状态置为未订阅
-//                    userService;
-                    MessageModelUtil.cancelAttention("",fromUserName);
+                    getUserInfo(getAccessToken(), fromUserName);// 更新用户信息
+//                    MessageModelUtil.cancelAttention(getAccessToken(),fromUserName);
             	}else if (eventType.equals(MessageUtil.EVENT_TYPE_SCAN)) {              	// 扫描带参数二维码
                     logger.info("扫描带参数二维码");
                 }else if (eventType.equals(MessageUtil.EVENT_TYPE_LOCATION)) {             	// 上报地理位置
@@ -102,10 +100,10 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
                     // 事件KEY值，与创建自定义菜单时指定的KEY值对应
                     String eventKey=requestMap.get("EventKey");
                     logger.info("eventKey------->"+eventKey);
-                    // TODO: 判断用户是否存在，存在的话，更新数据库，不存在的话保存用户信息
+                    getUserInfo(getAccessToken(), fromUserName);// 更新用户信息
                 } else if (eventType.equals(MessageUtil.EVENT_TYPE_VIEW)) {// 自定义菜单（(自定义菜单URl视图)）
                     logger.info("处理自定义菜单URI视图");
-                    // TODO: 判断用户是否存在，存在的话，更新数据库，不存在的话保存用户信息
+                    getUserInfo(getAccessToken(), fromUserName);// 更新用户信息
                 }
             }
         } catch (Exception e) {
@@ -122,26 +120,46 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
 
     @Override
     public String getAccessToken() {
-        if (StringUtils.isBlank(appId)){
-            logger.error("appid is null");
-            return "error: appid is null";
+        AccessToken accessToken = accessTokenService.selectByPrimaryKey(1);
+        if (accessToken != null){
+            logger.info("CreateTime: " + accessToken.getCreateDate() + " NOW: "+new Date().getTime() +"\n"+ Long.parseLong(accessToken.getExpiresin()));
         }
-        if (StringUtils.isBlank(appKey)){
-            logger.error("appKey is null");
-            return "error: appKey is null";
+        if (accessToken == null || accessToken.getCreateDate().getTime() + Long.parseLong(accessToken.getExpiresin()) * 1000 < new Date().getTime()){
+            if (StringUtils.isBlank(appId)){
+                logger.error("appId maybe null. receive appid is : " + appId);
+                return null;
+            }
+            if (StringUtils.isBlank(appKey)){
+                logger.error("appKey maybe null. receive appKey is : " + appKey);
+                return null;
+            }
+            String accessTokenUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + appId + "&secret=" + appKey;
+            JSONObject jsonObject = WeixinUtil.httpRequest(accessTokenUrl, "GET", null);
+            if (jsonObject.getString("errorcode") == null){
+                accessToken = new AccessToken();
+                accessToken.setId(1);
+                accessToken.setAccessToken(jsonObject.getString("access_token"));
+                accessToken.setExpiresin(jsonObject.getString("expires_in"));
+                accessToken.setCreateDate(new Date());
+            }
+            if (accessToken == null){
+                accessTokenService.insert(accessToken);
+            }
+            accessTokenService.updateByPrimaryKey(accessToken);
         }
-        String url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid="+appId+"&secret="+appKey;
-        String result = HttpBaseUtils.getRequestJson(restTemplate, url, null);
-        if (StringUtils.isNotBlank(result)){
-            JSONObject jsonObject = (JSONObject) JSON.parse(result);
-            String accessToken = jsonObject.getString("access_token");
-            return accessToken;
-        }
-        return null;
+        return accessToken.getAccessToken();
     }
 
     @Override
     public String getUserInfo(String accessToken, String openid) {
+        if (StringUtils.isBlank(accessToken)){
+            logger.error("access_token is null");
+            return null;
+        }
+        if (StringUtils.isBlank(openid)){
+            logger.error("openid is null");
+            return null;
+        }
         String url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token="+accessToken+"&openid="+openid+"&lang=zh_CN";
         String result = HttpBaseUtils.getRequestJson(restTemplate, url, null);
         if (StringUtils.isNotBlank(result)){
@@ -155,6 +173,11 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
             return result;
         }
         return null;
+    }
+
+    @Override
+    public void processRequest(HttpServletRequest request, HttpServletResponse response) {
+
     }
 
 }

@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 @Component
 public class MessageUtil {
@@ -218,7 +219,34 @@ public class MessageUtil {
                 @Override
                 @SuppressWarnings("rawtypes")
                 public void startNode(String name, Class clazz) {
+                    if (!name.equals("xml")){// xml属性首字母大写
+                        char[] arr = name.toCharArray();
+                        if (arr[0] >= 'a' && arr[0] <= 'z'){
+                            // ASCII码，大写字母和小写字符之间数值上差32
+                            arr[0] = (char)((int)arr[0]-32);
+                        }
+                        name = new String(arr);
+                    }
                     super.startNode(name, clazz);
+                }
+
+                @Override
+                public void setValue(String text) {
+                    if (text != null && !"".equals(text)) {
+                        //浮点型判断
+                        Pattern patternInt = Pattern.compile("[0-9]*(\\.?)[0-9]*");
+                        //整型判断
+                        Pattern patternFloat = Pattern.compile("[0-9]+");
+                        //如果是整数或浮点数 就不要加[CDATA[]了
+                        if (patternInt.matcher(text).matches() || patternFloat.matcher(text).matches()) {
+                            cdata = false;
+                        } else {
+                            cdata = true;
+                        }
+                    }
+                    super.setValue(text);
+
+
                 }
 
                 @Override

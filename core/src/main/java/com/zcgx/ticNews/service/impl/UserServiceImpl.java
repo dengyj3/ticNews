@@ -16,6 +16,10 @@ public class UserServiceImpl implements UserService {
     UserDao userDao;
     @Override
     public void saveUser(User user) {
+        String unionid = user.getUnionid();
+        if (isExist(unionid)){
+            user.setId(userDao.findByUnionId(unionid).getId());
+        }
         userDao.saveAndFlush(user);
     }
 

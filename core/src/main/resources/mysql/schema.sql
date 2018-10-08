@@ -44,4 +44,11 @@ create table `tbl_user`(
  PRIMARY KEY (`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户表';
 
-
+drop table `tbl_access_token`;
+create table `tbl_access_token`(
+	`id` int(11) NOT NULL AUTO_INCREMENT,
+	`access_token` varchar(255) COMMENT 'Token',
+	`expiresIn` varchar(255) COMMENT '有效期',
+	`create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+	PRIMARY KEY (`id`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='access_token表';
