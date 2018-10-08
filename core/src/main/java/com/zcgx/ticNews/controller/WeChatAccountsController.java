@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -102,10 +103,10 @@ public class WeChatAccountsController {
     }
     @ApiOperation(value = "测试token", notes = "测试token")
     @RequestMapping(value = "/process",method = RequestMethod.GET)
-    public Response<String> processRequest(HttpServletRequest request){
+    public String processRequest(HttpServletRequest request, HttpServletResponse response){
         logger.info("enter process......");
-        String resp = weChatCoreService.processRequest(request);
-        return Response.ok("SUCCESS");
+        String respMsg = weChatCoreService.processRequest(request);
+        return respMsg;
     }
 
 }

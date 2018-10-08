@@ -65,10 +65,10 @@ public class MessageModelUtil {
         List<Article> articleList = new ArrayList<Article>();
         Article article = new Article();
         // 设置图文消息的标题
-        String string = "尊敬的用户，欢迎关注tic学院。";
+        String string = "尊敬的用户，欢迎关注TIC学院。";
         article.setTitle(string);
-        article.setPicUrl("ticlogo.png");
-        article.setUrl("/WeixinParticipantFouce");
+        article.setPicUrl("ticlogo.png");//TODO: zcgx logo
+        article.setUrl("/WeixinParticipantFouce");//TODO: 订阅早报的url
         articleList.add(article);
         newsMessage.setArticleCount(articleList.size());
         newsMessage.setArticles(articleList);

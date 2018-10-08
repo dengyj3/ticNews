@@ -60,6 +60,7 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
 
             if (msgType.equals(MessageUtil.REQ_MESSAGE_TYPE_TEXT)) {
                 textMessage.setContent(respContent);
+                getUserInfo(getAccessToken(), fromUserName);
                 respMessage = MessageUtil.textMessageToXml(textMessage);
             } else if (msgType.equals(MessageUtil.REQ_MESSAGE_TYPE_IMAGE)) {    // 图片消息
                 respContent = "您发送的是图片消息！";
@@ -88,7 +89,7 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
                 // 关注
                 if (eventType.equals(MessageUtil.EVENT_TYPE_SUBSCRIBE)){// 用户关注时保存用户信息
                     getUserInfo(getAccessToken(), fromUserName);// 保存用户信息
-//                    respMessage = MessageModelUtil.followResponseMessageModel(textMessage);
+                    respMessage = MessageModelUtil.followResponseMessageModel(textMessage);
                 }else if (eventType.equals(MessageUtil.EVENT_TYPE_UNSUBSCRIBE)) {// 取消关注
                     getUserInfo(getAccessToken(), fromUserName);// 更新用户信息
 //                    MessageModelUtil.cancelAttention(getAccessToken(),fromUserName);
