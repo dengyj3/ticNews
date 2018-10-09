@@ -36,7 +36,7 @@ create table `tbl_user`(
  `id` int(11) NOT NULL AUTO_INCREMENT,
  `subscribe` int(1) COMMENT '是否订阅公众号, 1:订阅, 2:未订阅',
  `openid` varchar(28) COMMENT '用户公众号的openid(公众号和网页是一样的)',
- `unionid` varchar(28) COMMENT '统一的用户unionid',
+ `unionid` varchar(28) unique COMMENT '统一的用户unionid',
  `subscribe_newspaper` int(1) COMMENT '是否订阅早报, 1:订阅, 2:未订阅',
  `user_source` int(1) COMMENT '用户来源, 1: 公众号, 2:小程序, 3: 其它',
  `mp_openid` varchar(28) COMMENT '小程序的openid',

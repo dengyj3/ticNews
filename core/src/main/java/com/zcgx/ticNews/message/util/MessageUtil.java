@@ -18,7 +18,6 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import java.io.InputStream;
 import java.io.Writer;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -225,7 +224,9 @@ public class MessageUtil {
                             // ASCII码，大写字母和小写字符之间数值上差32
                             arr[0] = (char)((int)arr[0]-32);
                         }
-                        name = new String(arr);
+                        if (!name.equals("item")) {
+                            name = new String(arr);
+                        }
                     }
                     super.startNode(name, clazz);
                 }
@@ -263,15 +264,4 @@ public class MessageUtil {
         }
     });
 
-    public static void main(String[] args) {
-        TextMessage textMessage = new TextMessage();
-        textMessage.setContent("content");
-        textMessage.setMsgType("text");
-        textMessage.setCreateTime(new Date().getTime());
-        textMessage.setFromUserName("AAA");
-        textMessage.setToUserName("BBB");
-        textMessage.setMsgId(12345678);
-
-        System.out.println(textMessageToXml(textMessage));
-    }
 }

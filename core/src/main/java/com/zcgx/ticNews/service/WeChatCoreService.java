@@ -1,9 +1,13 @@
 package com.zcgx.ticNews.service;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 public interface WeChatCoreService {
+    /**
+     * 微信请求处理
+     * @param request
+     * @return
+     */
     String processRequest(HttpServletRequest request);
 
     /**
@@ -20,5 +24,10 @@ public interface WeChatCoreService {
      */
     String getUserInfo(String accessToken, String openid);
 
-    void processRequest(HttpServletRequest request, HttpServletResponse response);
+    /**
+     * 用户取消关注处理, 先判断用户是否绑定, 如果已经绑定则解除绑定
+     * @param token
+     * @param openid
+     */
+    void cancelAttention(String token, String openid);
 }

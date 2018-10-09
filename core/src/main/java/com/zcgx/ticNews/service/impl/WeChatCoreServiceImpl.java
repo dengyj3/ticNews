@@ -9,8 +9,6 @@ import com.zcgx.ticNews.po.User;
 import com.zcgx.ticNews.service.AccessTokenService;
 import com.zcgx.ticNews.service.UserService;
 import com.zcgx.ticNews.service.WeChatCoreService;
-import com.zcgx.ticNews.util.DateUtils;
-import com.zcgx.ticNews.util.HttpBaseUtils;
 import com.zcgx.ticNews.message.util.MessageUtil;
 import com.zcgx.ticNews.util.WeixinUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -19,18 +17,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.Map;
 
 @Service("weChatCoreService")
 public class WeChatCoreServiceImpl implements WeChatCoreService {
     private static Logger logger = LoggerFactory.getLogger(WeChatCoreServiceImpl.class);
-    @Autowired
-    private RestTemplate restTemplate;
     @Autowired
     private UserService userService;
 
@@ -50,6 +44,7 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
         TextMessage textMessage = new TextMessage();
         try {
             Map<String, String> requestMap = MessageUtil.parseXml(request);
+            logger.info("-------xml转换为map---------" + requestMap);
             String fromUserName = requestMap.get("FromUserName");
             String toUserName = requestMap.get("ToUserName");
             String msgType = requestMap.get("MsgType");
@@ -59,6 +54,7 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
             textMessage.setMsgType(MessageUtil.RESP_MESSAGE_TYPE_TEXT);
 
             if (msgType.equals(MessageUtil.REQ_MESSAGE_TYPE_TEXT)) {
+                respContent="您发送的是文本消息!";
                 textMessage.setContent(respContent);
                 getUserInfo(getAccessToken(), fromUserName);
                 respMessage = MessageUtil.textMessageToXml(textMessage);
@@ -92,7 +88,7 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
                     respMessage = MessageModelUtil.followResponseMessageModel(textMessage);
                 }else if (eventType.equals(MessageUtil.EVENT_TYPE_UNSUBSCRIBE)) {// 取消关注
                     getUserInfo(getAccessToken(), fromUserName);// 更新用户信息
-//                    MessageModelUtil.cancelAttention(getAccessToken(),fromUserName);
+                    cancelAttention(getAccessToken(),fromUserName);
             	}else if (eventType.equals(MessageUtil.EVENT_TYPE_SCAN)) {              	// 扫描带参数二维码
                     logger.info("扫描带参数二维码");
                 }else if (eventType.equals(MessageUtil.EVENT_TYPE_LOCATION)) {             	// 上报地理位置
@@ -161,10 +157,12 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
             logger.error("openid is null");
             return null;
         }
-        String url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token="+accessToken+"&openid="+openid+"&lang=zh_CN";
-        String result = HttpBaseUtils.getRequestJson(restTemplate, url, null);
+        String result = MessageModelUtil.getUserInfo(accessToken, openid).toJSONString();
         if (StringUtils.isNotBlank(result)){
             JSONObject jsonObject = (JSONObject) JSON.parse(result);
+            if (jsonObject.containsKey("errorcode")){
+                return result;
+            }
             User user = new User();
             user.setOpenid(openid);
             user.setSubscribe(jsonObject.getInteger("subscribe"));
@@ -177,8 +175,13 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
     }
 
     @Override
-    public void processRequest(HttpServletRequest request, HttpServletResponse response) {
-
+    public void cancelAttention(String token, String openid) {
+        JSONObject jsonObject = MessageModelUtil.getUserInfo(token, openid);
+        User user = userService.findByOpenId(openid);
+        user.setSubscribe(jsonObject.getInteger("subscribe"));
+        userService.saveUser(user);
     }
+
+
 
 }

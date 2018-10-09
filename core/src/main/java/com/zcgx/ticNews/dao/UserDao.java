@@ -17,4 +17,7 @@ public interface UserDao extends JpaRepository<User, Long>, JpaSpecificationExec
 
     @Query(value = "select * from jianbao.tbl_user where subscribe_newspaper=1", nativeQuery = true)
     List<User> findBySubscribeNewspaper();
+
+    @Query(value = "select * from jianbao.tbl_user where openid=?1", nativeQuery = true)
+    User findByOpenId(String openid);
 }

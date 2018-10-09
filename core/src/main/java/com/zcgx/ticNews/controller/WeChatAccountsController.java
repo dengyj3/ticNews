@@ -1,7 +1,6 @@
 package com.zcgx.ticNews.controller;
 
 import com.zcgx.ticNews.service.WeChatCoreService;
-import com.zcgx.ticNews.util.Response;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,9 +24,10 @@ public class WeChatAccountsController {
     WeChatCoreService weChatCoreService;
 
     /*
-     * 自定义token, 用作生成签名,从而验证安全性
+     * 自定义token, 用作生成签名,从而验证安全性, TODO: token需要修改为实际的
      * */
     private final String TOKEN = "springbird";
+
     @ApiOperation(value = "测试token", notes = "测试token")
     @RequestMapping(value = "/login",method = RequestMethod.GET)
     public String login(@RequestParam("signature") String signature,
@@ -35,7 +35,7 @@ public class WeChatAccountsController {
                                    @RequestParam("nonce") String nonce,
                                    @RequestParam("echostr") String echostr){
 
-        System.out.println("-----开始校验签名-----");
+        logger.info("-----开始校验签名-----");
         /**
          * 将token、timestamp、nonce三个参数进行字典序排序
          * 并拼接为一个字符串
@@ -101,8 +101,15 @@ public class WeChatAccountsController {
         }
         return "";
     }
+
+    /**
+     * 处理微信服务器发过来的请求, 需要把该url配置到公众号后台, produces用于解决乱码问题
+     * @param request
+     * @param response
+     * @return
+     */
     @ApiOperation(value = "测试token", notes = "测试token")
-    @RequestMapping(value = "/process",method = RequestMethod.GET)
+    @RequestMapping(value = "/login",method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
     public String processRequest(HttpServletRequest request, HttpServletResponse response){
         logger.info("enter process......");
         String respMsg = weChatCoreService.processRequest(request);

@@ -1,10 +1,8 @@
 package com.zcgx.ticNews.util;
 
 import com.alibaba.fastjson.JSONObject;
-import com.zcgx.ticNews.service.AccessTokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -21,8 +19,6 @@ import java.util.Date;
 
 public class WeixinUtil {
     private static Logger logger = LoggerFactory.getLogger(WeixinUtil.class);
-    @Autowired
-    AccessTokenService accessTokenService;
 
     /**
      * 发起https请求并获取结果
@@ -87,6 +83,12 @@ public class WeixinUtil {
         return jsonObject;
     }
 
+    /**
+     * 发送模板消息
+     * @param accessToken
+     * @param jsonData
+     * @return
+     */
     public static String sendTemplateMsg(String accessToken, String jsonData) {
         String requestUrl = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token="+accessToken;
         JSONObject jsonObject = httpRequest(requestUrl, "GET", jsonData);
@@ -102,6 +104,12 @@ public class WeixinUtil {
         return null;
     }
 
+    /**
+     * 生成模板消息
+     * @param templateId 模板id
+     * @param openid
+     * @return
+     */
     public static String toTemplateMsgText(String templateId, String openid){
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("touser", openid);

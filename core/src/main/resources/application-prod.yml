@@ -7,7 +7,7 @@ spring:
   application.name: ticNews
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://rm-bp1p0ph30h9x909m4.mysql.rds.aliyuncs.com:3306/jianbao?zeroDateTimeBehavior=convertToNull&characterEncoding=utf-8
+    url: jdbc:mysql://rm-bp1p0ph30h9x909m4.mysql.rds.aliyuncs.com:3306/jianbao?zeroDateTimeBehavior=convertToNull&characterEncoding=utf-8&useSSL=false
     username: jianbao
     password: zcgx123456
   jpa:
@@ -20,3 +20,4 @@ wx:
   push: false
   appId: pleaseinput
   appKey: pleaseinput
+  templateId: fXvHklP1K8DCTO7p-h2wfscB6cnFSpF9pW6k5TF-AI0

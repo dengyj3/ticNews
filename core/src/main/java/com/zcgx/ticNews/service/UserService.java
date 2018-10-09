@@ -30,6 +30,13 @@ public interface UserService {
     User findByUnionId(String unionid);
 
     /**
+     * 根据openid返回用户信息
+     * @param openid
+     * @return
+     */
+    User findByOpenId(String openid);
+
+    /**
      * 检查用户是否订阅
      * @param openid
      * @return

@@ -26,6 +26,8 @@ public class QuartzServiceImpl implements QuartzService {
 
     @Value("${wx.push}")
     boolean isPush; //推送消息开关, 正式上线时设置为true
+    @Value("${wx.templateId}")
+    String templateId; //推送消息的模板Id
 
     @Override
     @Scheduled(cron = "0 0 10 * * ?")
@@ -43,7 +45,7 @@ public class QuartzServiceImpl implements QuartzService {
                 if (StringUtils.isBlank(openid)){
                     openid = user.getMpOpenid();
                 }
-                String tmpTxt = WeixinUtil.toTemplateMsgText("j0vrUnrlmGJ373HU6p8SZTBL4Bb8Ws759KnI8OcPXRQ",openid);
+                String tmpTxt = WeixinUtil.toTemplateMsgText(templateId,openid);
                 logger.info("send message is : " + tmpTxt);
                 String sendTemplateMsg = WeixinUtil.sendTemplateMsg(accessToken, tmpTxt);
                 logger.info("send message return is : " + sendTemplateMsg);

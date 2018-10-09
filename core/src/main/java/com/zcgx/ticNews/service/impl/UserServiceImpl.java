@@ -1,9 +1,9 @@
 package com.zcgx.ticNews.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.zcgx.ticNews.dao.UserDao;
-import com.zcgx.ticNews.message.util.MessageModelUtil;
 import com.zcgx.ticNews.po.User;
-import com.zcgx.ticNews.service.AccessTokenService;
 import com.zcgx.ticNews.service.UserService;
 import com.zcgx.ticNews.service.WeChatCoreService;
 import org.slf4j.Logger;
@@ -24,6 +24,8 @@ public class UserServiceImpl implements UserService {
         String unionid = user.getUnionid();
         if (isExist(unionid)){
             user.setId(userDao.findByUnionId(unionid).getId());
+        }else if (userDao.findByOpenId(user.getOpenid()) != null){
+            user.setId(userDao.findByOpenId(user.getOpenid()).getId());
         }
         userDao.saveAndFlush(user);
     }
@@ -48,7 +50,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findByOpenId(String openid) {
+        return userDao.findByOpenId(openid);
+    }
+
+    @Override
     public boolean checkIsScribe(String openid) {
-        return MessageModelUtil.isAlreadyBinding(weChatCoreService.getAccessToken(),openid);
+        String accessToken = weChatCoreService.getAccessToken();
+        String result = weChatCoreService.getUserInfo(accessToken, openid);
+        JSONObject jsonObject = JSON.parseObject(result);
+        return 1 == jsonObject.getInteger("subscribe");
     }
 }
