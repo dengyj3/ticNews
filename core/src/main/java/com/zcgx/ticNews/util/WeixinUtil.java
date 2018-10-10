@@ -115,7 +115,7 @@ public class WeixinUtil {
         jsonObject.put("touser", openid);
         jsonObject.put("template_id", templateId);
         // TODO: 替换url
-        jsonObject.put("url","https://blog.csdn.net/rwb0123/article/details/50424339");
+        jsonObject.put("url","https://ticnews.labyun.cn/daily/"+DateUtils.getDateYMD1(new Date()));
         jsonObject.put("topcolor","#FF0000");
         JSONObject data = new JSONObject();
         JSONObject first = new JSONObject();
