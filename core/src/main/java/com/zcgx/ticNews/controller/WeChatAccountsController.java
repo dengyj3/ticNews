@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +25,7 @@ public class WeChatAccountsController {
     /*
      * 自定义token, 用作生成签名,从而验证安全性, TODO: token需要修改为实际的
      * */
+    @Value("${wx.token}")
     private final String TOKEN = "springbird";
 
     @ApiOperation(value = "测试token", notes = "测试token")
