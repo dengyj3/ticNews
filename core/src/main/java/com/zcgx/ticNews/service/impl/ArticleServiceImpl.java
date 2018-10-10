@@ -65,6 +65,7 @@ public class ArticleServiceImpl implements ArticleService {
         Article article = articleDao.findById(id);
         List<Long> tagIds = tagArticleRelationDao.findByArticleId(id);
         List<Long> articleIds = tagArticleRelationService.queryTagArticleRelation(tagIds);
+        articleIds.remove(id);
         List<Article> articleEvent = articleDao.findEventTrackByArticleId(articleIds);
         ArticleDTO articleDTO = new ArticleDTO();
         if (article != null){
