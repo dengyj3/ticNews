@@ -13,7 +13,7 @@ public interface ArticleService {
 
     Response<ArticleDTO> queryArticleDetail(long id) throws Exception;
 
-    Response<String> operation(long id, String vote) throws Exception;
+    Response<String> operation(long id, String vote, String unionid) throws Exception;
 
     int addArticle(Article article) throws Exception;
 

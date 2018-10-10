@@ -1,5 +1,6 @@
 package com.zcgx.ticNews.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.zcgx.ticNews.dto.ArticleDTO;
 import com.zcgx.ticNews.service.ArticleService;
 import com.zcgx.ticNews.util.PageList;
@@ -46,15 +47,17 @@ public class ArticleController {
         }
     }
     @ApiOperation(value = "用户表态", notes = "用户表态")
-    @ApiImplicitParams({@ApiImplicitParam(name = "id", value = "文章id",required = true,dataType = "long", paramType = "query"),
-            @ApiImplicitParam(name = "vote", value = "用户表态, Y or N", required = true, dataType = "String")})
-    @RequestMapping(value = "/operation", method = RequestMethod.GET)
-    public Response<String> operation(@RequestParam(required = true) long id, @RequestParam(required = true) String vote){
+    @ApiImplicitParam(name = "jsonObject", value = "用户表态", required = true, dataType = "Article")
+    @RequestMapping(value = "/operation", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    public Response<String> operation(@RequestBody JSONObject jsonObject){
         try {
-            return articleService.operation(id, vote);
+            long id = jsonObject.getInteger("id");
+            String vote = jsonObject.getString("vote");
+            String unionid = jsonObject.getString("uniondid");
+            return articleService.operation(id, vote, unionid);
         }catch (Exception e){
-            logger.error("用户操作失败! " + e);
-            return Response.error("用户失败! " + e);
+            logger.error("用户表态失败! " + e);
+            return Response.error("用户表态失败! " + e);
         }
     }
 

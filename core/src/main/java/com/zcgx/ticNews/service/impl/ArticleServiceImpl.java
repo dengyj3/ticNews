@@ -2,7 +2,9 @@ package com.zcgx.ticNews.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zcgx.ticNews.dao.ArticleDao;
+import com.zcgx.ticNews.dao.TagArticleRelationDao;
 import com.zcgx.ticNews.dao.TagDao;
+import com.zcgx.ticNews.dao.VoteDao;
 import com.zcgx.ticNews.dto.ArticleDTO;
 import com.zcgx.ticNews.dto.EventTrackVo;
 import com.zcgx.ticNews.po.Article;
@@ -28,9 +30,11 @@ public class ArticleServiceImpl implements ArticleService {
     @Autowired
     ArticleDao articleDao;
     @Autowired
-    TagDao tagDao;
+    TagArticleRelationDao tagArticleRelationDao;
     @Autowired
     TagArticleRelationService tagArticleRelationService;
+    @Autowired
+    VoteDao voteDao;
 
     @Override
     public Response<PageList<ArticleDTO>> queryArticleList(int pageNo, int pageSize)  throws Exception{
@@ -58,7 +62,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public Response<ArticleDTO> queryArticleDetail(long id) throws Exception {
         Article article = articleDao.findById(id);
-        List<Long> tagIds = tagDao.findByArticleId(id);
+        List<Long> tagIds = tagArticleRelationDao.findByArticleId(id);
         List<Long> articleIds = tagArticleRelationService.queryTagArticleRelation(tagIds);
         List<Article> articleEvent = articleDao.findEventTrackByArticleId(articleIds);
         ArticleDTO articleDTO = new ArticleDTO();
@@ -87,7 +91,8 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public Response<String> operation(long id, String vote)  throws Exception{
+    public Response<String> operation(long id, String vote, String unionid)  throws Exception{
+
         if ("Y".equals(vote)){
             articleDao.updateVotePositiveCountById(id);
         }else {

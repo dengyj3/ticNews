@@ -25,4 +25,7 @@ public interface TagArticleRelationDao extends JpaRepository<TagArticleRelation,
     @Modifying
     @Query(value = "delete from jianbao.tbl_article_tag where tag_id=?1", nativeQuery = true)
     List<TagArticleRelation> deleteByTagId(long tagId);
+
+    @Query(value = "select tag_id from jianbao.tbl_article_tag where article_id=?1", nativeQuery = true)
+    List<Long> findByArticleId(long articleId);
 }
