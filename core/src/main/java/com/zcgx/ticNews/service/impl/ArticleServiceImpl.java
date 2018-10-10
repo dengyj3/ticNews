@@ -41,6 +41,7 @@ public class ArticleServiceImpl implements ArticleService {
             articleDTO.setVoteNegtiveName(article.getVoteNegtiveName());
             articleDTO.setVoteNegtiveCount(article.getVoteNegtiveCount());
             articleDTO.setUrl(article.getUrl());
+            articleDTO.setSource(article.getSource());
             articleDTOList.add(articleDTO);
         });
         PageList<ArticleDTO> pageList = new PageList<ArticleDTO>(pageNo, pageSize, (int)count, articleDTOList);
@@ -61,6 +62,7 @@ public class ArticleServiceImpl implements ArticleService {
             articleDTO.setVoteNegtiveName(article.getVoteNegtiveName());
             articleDTO.setVoteNegtiveCount(article.getVoteNegtiveCount());
             articleDTO.setUrl(article.getUrl());
+            articleDTO.setSource(article.getSource());
             List<EventTrackVo> eventTracking = new ArrayList<>();
             articleEvent.stream().forEach(article1 -> {
                 EventTrackVo eventTrackVo = new EventTrackVo();

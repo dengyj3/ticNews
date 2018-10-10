@@ -20,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/manage")
+@CrossOrigin
 public class ArticleManageController {
     private final static Logger logger = LoggerFactory.getLogger(ArticleManageController.class);
     @Autowired

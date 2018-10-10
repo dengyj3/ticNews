@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/article")
+@CrossOrigin
 public class ArticleController {
     private final static Logger logger = LoggerFactory.getLogger(ArticleController.class);
     @Autowired

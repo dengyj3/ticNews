@@ -12,6 +12,16 @@ public class ArticleDTO {
     private long voteNegtiveCount;
     private String createTime;
     private String url;
+    private String source;
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
     private List<EventTrackVo> eventTracking;
 
     public List<EventTrackVo> getEventTracking() {
