@@ -2,10 +2,13 @@ package com.zcgx.ticNews.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zcgx.ticNews.dao.ArticleDao;
+import com.zcgx.ticNews.dao.TagDao;
 import com.zcgx.ticNews.dto.ArticleDTO;
 import com.zcgx.ticNews.dto.EventTrackVo;
 import com.zcgx.ticNews.po.Article;
+import com.zcgx.ticNews.po.TagArticleRelation;
 import com.zcgx.ticNews.service.ArticleService;
+import com.zcgx.ticNews.service.TagArticleRelationService;
 import com.zcgx.ticNews.util.DateUtils;
 import com.zcgx.ticNews.util.PageList;
 import com.zcgx.ticNews.util.Response;
@@ -24,6 +27,10 @@ public class ArticleServiceImpl implements ArticleService {
     private final static Logger logger = LoggerFactory.getLogger(ArticleServiceImpl.class);
     @Autowired
     ArticleDao articleDao;
+    @Autowired
+    TagDao tagDao;
+    @Autowired
+    TagArticleRelationService tagArticleRelationService;
 
     @Override
     public Response<PageList<ArticleDTO>> queryArticleList(int pageNo, int pageSize)  throws Exception{
@@ -51,7 +58,9 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public Response<ArticleDTO> queryArticleDetail(long id) throws Exception {
         Article article = articleDao.findById(id);
-        List<Article> articleEvent = articleDao.findEventTrackByArticleId(id);
+        List<Long> tagIds = tagDao.findByArticleId(id);
+        List<Long> articleIds = tagArticleRelationService.queryTagArticleRelation(tagIds);
+        List<Article> articleEvent = articleDao.findEventTrackByArticleId(articleIds);
         ArticleDTO articleDTO = new ArticleDTO();
         if (article != null){
             articleDTO.setId(article.getId());

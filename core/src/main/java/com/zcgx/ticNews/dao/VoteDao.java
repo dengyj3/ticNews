@@ -1,21 +1,16 @@
 package com.zcgx.ticNews.dao;
 
-import com.zcgx.ticNews.po.Tag;
+import com.zcgx.ticNews.po.Vote;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
-import java.util.List;
-
 /**
  *
  */
-public interface TagDao extends JpaRepository<Tag, Long>, JpaSpecificationExecutor<Tag> {
+public interface VoteDao extends JpaRepository<Vote, Long>, JpaSpecificationExecutor<Vote> {
     @Query(value = "select * from jianbao.tbl_tag where id=?1", nativeQuery = true)
-    Tag findById(long id);
+    Vote findById(long id);
     @Query(value = "select * from jianbao.tbl_tag where tag_name=?1", nativeQuery = true)
-    Tag findByTagName(String tagName);
-    @Query(value = "select id from jianbao.tbl_tag where article_id=?1", nativeQuery = true)
-    List<Long> findByArticleId(long articleId);
-
+    Vote findByTagName(String tagName);
 }

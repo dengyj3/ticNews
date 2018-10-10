@@ -13,8 +13,8 @@ import java.util.List;
  *
  */
 public interface TagArticleRelationDao extends JpaRepository<TagArticleRelation, Long>, JpaSpecificationExecutor<TagArticleRelation> {
-    @Query(value = "select * from jianbao.tbl_article_tag where article_id=?1", nativeQuery = true)
-    List<TagArticleRelation> findByArticleId(long articleId);
+    @Query(value = "select article_id from jianbao.tbl_article_tag where tag_id in (?1)", nativeQuery = true)
+    List<Long> findByTagId(List<Long> tagId);
 
     @Transactional
     @Modifying

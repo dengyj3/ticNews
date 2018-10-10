@@ -19,8 +19,8 @@ public interface ArticleDao extends JpaRepository<Article, Long>, JpaSpecificati
     List<Article> findAll(int pageNo, int pageSize);
     @Query(value = "select * from jianbao.tbl_article_list where id=?1", nativeQuery = true)
     Article findById(long id);
-    @Query(value = "select t1.* from jianbao.tbl_article_list t1 left join jianbao.tbl_article_tag t2 on t1.id=t2.article_id where t1.id=?1 order by t1.id desc", nativeQuery = true)
-    List<Article> findEventTrackByArticleId(long articleId);
+    @Query(value = "select t1.* from jianbao.tbl_article_list t1 left join jianbao.tbl_article_tag t2 on t1.id=t2.article_id where t1.id in (?1) order by t1.id desc", nativeQuery = true)
+    List<Article> findEventTrackByArticleId(List<Long> articleId);
 
     @Modifying
     @Transactional
