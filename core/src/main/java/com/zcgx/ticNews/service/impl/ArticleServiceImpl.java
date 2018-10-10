@@ -9,6 +9,7 @@ import com.zcgx.ticNews.dto.ArticleDTO;
 import com.zcgx.ticNews.dto.EventTrackVo;
 import com.zcgx.ticNews.po.Article;
 import com.zcgx.ticNews.po.TagArticleRelation;
+import com.zcgx.ticNews.po.Vote;
 import com.zcgx.ticNews.service.ArticleService;
 import com.zcgx.ticNews.service.TagArticleRelationService;
 import com.zcgx.ticNews.util.DateUtils;
@@ -92,13 +93,22 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public Response<String> operation(long id, String vote, String unionid)  throws Exception{
-
-        if ("Y".equals(vote)){
-            articleDao.updateVotePositiveCountById(id);
+        Vote voteEntity = voteDao.findByArticleIdAndUnionid(id, unionid);
+        if (voteEntity == null) {
+            if ("Y".equals(vote)) {
+                articleDao.updateVotePositiveCountById(id);
+            } else {
+                articleDao.updateVoteNegtiveCountById(id);
+            }
+            voteEntity = new Vote();
+            voteEntity.setArticleId(id);
+            voteEntity.setVote(vote);
+            voteEntity.setUnionid(unionid);
+            voteDao.saveAndFlush(voteEntity);
+            return Response.ok("SUCCESS");
         }else {
-            articleDao.updateVoteNegtiveCountById(id);
+            return Response.ok("该用户已经投过");
         }
-        return Response.ok("SUCCESS");
     }
 
     @Override

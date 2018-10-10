@@ -52,3 +52,12 @@ create table `tbl_access_token`(
 	`create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
 	PRIMARY KEY (`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='access_token表';
+
+drop table `tbl_vote`;
+create table `tbl_vote`(
+	`id` int(11) NOT NULL AUTO_INCREMENT,
+	`unionid` varchar(28) COMMENT '用户unionid',
+	`article_id` int(11) COMMENT '文章ID',
+	`vote` varchar(1) COMMENT '投票',
+	PRIMARY KEY (`id`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='投票表';
