@@ -15,6 +15,7 @@ import com.zcgx.ticNews.service.TagArticleRelationService;
 import com.zcgx.ticNews.util.DateUtils;
 import com.zcgx.ticNews.util.PageList;
 import com.zcgx.ticNews.util.Response;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +62,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public Response<ArticleDTO> queryArticleDetail(long id) throws Exception {
+    public Response<ArticleDTO> queryArticleDetail(long id, String unionid) throws Exception {
         Article article = articleDao.findById(id);
         List<Long> tagIds = tagArticleRelationDao.findByArticleId(id);
         List<Long> articleIds = tagArticleRelationService.queryTagArticleRelation(tagIds);
@@ -78,6 +79,11 @@ public class ArticleServiceImpl implements ArticleService {
             articleDTO.setVoteNegtiveCount(article.getVoteNegtiveCount());
             articleDTO.setUrl(article.getUrl());
             articleDTO.setSource(article.getSource());
+            if (StringUtils.isNotBlank(unionid)){
+                Vote vote = voteDao.findByArticleIdAndUnionid(id, unionid);
+                articleDTO.setVote(vote.getVote());
+                articleDTO.setUniond(vote.getUnionid());
+            }
             List<EventTrackVo> eventTracking = new ArrayList<>();
             articleEvent.stream().forEach(article1 -> {
                 EventTrackVo eventTrackVo = new EventTrackVo();

@@ -11,7 +11,7 @@ import java.util.List;
 public interface ArticleService {
     Response<PageList<ArticleDTO>> queryArticleList(int pageNo, int pageSize) throws Exception;
 
-    Response<ArticleDTO> queryArticleDetail(long id) throws Exception;
+    Response<ArticleDTO> queryArticleDetail(long id, String unionid) throws Exception;
 
     Response<String> operation(long id, String vote, String unionid) throws Exception;
 

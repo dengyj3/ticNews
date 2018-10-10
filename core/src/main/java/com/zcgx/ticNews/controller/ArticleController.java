@@ -38,9 +38,9 @@ public class ArticleController {
     }
     @ApiOperation(value = "获取文章明细", notes = "根据文章ID获取文章详情")
     @RequestMapping(value = "/queryArticleDetail", method = RequestMethod.GET)
-    public Response<ArticleDTO> queryArticleDetail(@RequestParam(required = true) long id){
+    public Response<ArticleDTO> queryArticleDetail(@RequestParam(required = true) long id, @RequestParam(required = false) String unionid){
         try {
-            return articleService.queryArticleDetail(id);
+            return articleService.queryArticleDetail(id, unionid);
         }catch (Exception e){
             logger.error("获取文章详情失败! " + e);
             return Response.error("获取文章详情失败! " + e);

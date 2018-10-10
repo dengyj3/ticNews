@@ -13,6 +13,8 @@ public class ArticleDTO {
     private String createTime;
     private String url;
     private String source;
+    private String uniond;
+    private String vote;
 
     public String getSource() {
         return source;
@@ -102,5 +104,21 @@ public class ArticleDTO {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getUniond() {
+        return uniond;
+    }
+
+    public void setUniond(String uniond) {
+        this.uniond = uniond;
+    }
+
+    public String getVote() {
+        return vote;
+    }
+
+    public void setVote(String vote) {
+        this.vote = vote;
     }
 }
