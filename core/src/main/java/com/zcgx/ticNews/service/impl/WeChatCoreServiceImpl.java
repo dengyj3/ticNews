@@ -10,6 +10,7 @@ import com.zcgx.ticNews.service.AccessTokenService;
 import com.zcgx.ticNews.service.UserService;
 import com.zcgx.ticNews.service.WeChatCoreService;
 import com.zcgx.ticNews.message.util.MessageUtil;
+import com.zcgx.ticNews.util.AESUtil;
 import com.zcgx.ticNews.util.WeixinUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -25,6 +26,7 @@ import java.util.Map;
 @Service("weChatCoreService")
 public class WeChatCoreServiceImpl implements WeChatCoreService {
     private static Logger logger = LoggerFactory.getLogger(WeChatCoreServiceImpl.class);
+    private static final String WATERMARK = "watermark";
     @Autowired
     private UserService userService;
 
@@ -36,6 +38,12 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
 
     @Value("${wx.appKey}")
     private String appKey = "";
+
+    @Value("${wx.xiaochengxu.appId}")
+    private String xcxAppId;
+
+    @Value("${wx.xiaochengxu.appSecret}")
+    private String xcxAppSecret;
 
     @Override
     public String processRequest(HttpServletRequest request) {
@@ -182,6 +190,19 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
         userService.saveUser(user);
     }
 
+    @Override
+    public String decrypt(String code, String encryptedData, String iv) {
+        String result = "";
+        String url = "https://api.weixin.qq.com/sns/jscode2session?appid="+xcxAppId + "&secret=" + xcxAppSecret + "&js_code=" + code + "&grant_type=authorization_code";
+        JSONObject jsonObject = WeixinUtil.httpRequest(url, "GET", null);
+        logger.info("code2session return is : " + jsonObject.toJSONString());
+        if (jsonObject.getInteger("errcode") == 0){
+            String sessionKey = jsonObject.getString("session_key");
+            result = AESUtil.decrypt(xcxAppId, encryptedData, sessionKey, iv, WATERMARK);
+            logger.info("descrypt user info is : " + result);
+        }
+        return result;
+    }
 
 
 }

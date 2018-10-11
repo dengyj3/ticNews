@@ -1,80 +1,45 @@
 package com.zcgx.ticNews.util;
 
-import javax.crypto.*;
-import javax.crypto.spec.SecretKeySpec;
-import java.io.UnsupportedEncodingException;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.codec.binary.Base64;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import java.security.AlgorithmParameters;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
+import java.security.NoSuchProviderException;
+import java.security.Security;
+
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+
 
 public class AESUtil {
-    /**
-     * AES加密字符串
-     *
-     * @param content  需要被加密的字符串
-     * @param password 加密需要的密码
-     * @return 密文
-     */
-    public static byte[] encrypt(String content, String password) {
-        try {
-            KeyGenerator kgen = KeyGenerator.getInstance("AES");// 创建AES的Key生产者
-
-            kgen.init(128, new SecureRandom(password.getBytes()));// 利用用户密码作为随机数初始化出
-            // 128位的key生产者
-            //加密没关系，SecureRandom是生成安全随机数序列，password.getBytes()是种子，只要种子相同，序列就一样，所以解密只要有password就行
-
-            SecretKey secretKey = kgen.generateKey();// 根据用户密码，生成一个密钥
-
-            byte[] enCodeFormat = secretKey.getEncoded();// 返回基本编码格式的密钥，如果此密钥不支持编码，则返回
-            // null。
-
-            SecretKeySpec key = new SecretKeySpec(enCodeFormat, "AES");// 转换为AES专用密钥
-
-            Cipher cipher = Cipher.getInstance("AES");// 创建密码器
-
-            byte[] byteContent = content.getBytes("utf-8");
-
-            cipher.init(Cipher.ENCRYPT_MODE, key);// 初始化为加密模式的密码器
-
-            byte[] result = cipher.doFinal(byteContent);// 加密
-
-            return result;
-
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+    public static boolean initialized = false;
 
     /**
-     * 解密AES加密过的字符串
-     *
-     * @param content  AES加密过过的内容
-     * @param password 加密时的密码
-     * @return 明文
+     * AES解密
+     * @param content 密文
+     * @return
+     * @throws InvalidAlgorithmParameterException
+     * @throws NoSuchProviderException
      */
-    public static byte[] decrypt(byte[] content, String password) {
+    public static byte[] decrypt(byte[] content, byte[] keyByte, byte[] ivByte) throws InvalidAlgorithmParameterException {
+        initialize();
         try {
-            KeyGenerator kgen = KeyGenerator.getInstance("AES");// 创建AES的Key生产者
-            kgen.init(128, new SecureRandom(password.getBytes()));
-            SecretKey secretKey = kgen.generateKey();// 根据用户密码，生成一个密钥
-            byte[] enCodeFormat = secretKey.getEncoded();// 返回基本编码格式的密钥
-            SecretKeySpec key = new SecretKeySpec(enCodeFormat, "AES");// 转换为AES专用密钥
-            Cipher cipher = Cipher.getInstance("AES");// 创建密码器
-            cipher.init(Cipher.DECRYPT_MODE, key);// 初始化为解密模式的密码器
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
+            Key sKeySpec = new SecretKeySpec(keyByte, "AES");
+
+            cipher.init(Cipher.DECRYPT_MODE, sKeySpec, generateIV(ivByte));// 初始化
             byte[] result = cipher.doFinal(content);
-            return result; // 明文
-
+            return result;
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (NoSuchPaddingException e) {
@@ -85,14 +50,45 @@ public class AESUtil {
             e.printStackTrace();
         } catch (BadPaddingException e) {
             e.printStackTrace();
+        } catch (NoSuchProviderException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
         return null;
     }
 
-    public static void main(String[] args) {
-        byte[] encrypt = encrypt("73ac773580b51790b33d76dd1704c4e4", "123");
-        System.out.println(new String(encrypt));
-        byte[] decrypt = decrypt(encrypt, "123");
-        System.out.println(new String(decrypt));
+    public static void initialize(){
+        if (initialized) return;
+        Security.addProvider(new BouncyCastleProvider());
+        initialized = true;
     }
+    //生成iv
+    public static AlgorithmParameters generateIV(byte[] iv) throws Exception{
+        AlgorithmParameters params = AlgorithmParameters.getInstance("AES");
+        params.init(new IvParameterSpec(iv));
+        return params;
+    }
+
+    public static String decrypt(String appId, String encryptedData, String sessionKey, String iv, String waterMark){
+        String result = "";
+        try{
+            byte[] resultByte = decrypt(Base64.decodeBase64(encryptedData), Base64.decodeBase64(sessionKey),Base64.decodeBase64(iv));
+            if (null != resultByte && resultByte.length > 0){
+                result = new String(WxPKCS7Encoder.decode(resultByte));
+                JSONObject jsonObject = JSON.parseObject(result);
+                String decryptAppid = jsonObject.getJSONObject(waterMark).getString("appid");
+                if (!appId.equals(decryptAppid)){
+                    result = "";
+                }
+            }
+        } catch (InvalidAlgorithmParameterException e) {
+            result = "";
+            e.printStackTrace();
+        }
+        return result;
+    }
+
 }

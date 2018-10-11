@@ -30,4 +30,6 @@ public interface WeChatCoreService {
      * @param openid
      */
     void cancelAttention(String token, String openid);
+
+    String decrypt(String code, String encryptedData, String iv);
 }

@@ -13,5 +13,5 @@ public interface AccessTokenService {
 
     int updateByPrimaryKeySelective(AccessToken accessToken);
 
-    int updateByPrimaryKey(AccessToken accessToken);
+    AccessToken updateByPrimaryKey(AccessToken accessToken);
 }

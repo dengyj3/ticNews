@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 @CacheConfig(cacheNames = "TokenCache")
 @Service("accessTokenService")
 public class AccessTokenServiceImpl implements AccessTokenService {
+    public static final String CACHE_KEY = "'accessToken'";
     @Autowired
     AccessTokenDao accessTokenDao;
 
@@ -24,7 +25,7 @@ public class AccessTokenServiceImpl implements AccessTokenService {
     }
 
     @Override
-    @CachePut(key = "#p0")
+    @CachePut(key = CACHE_KEY)
     public int insert(AccessToken accessToken) {
         accessTokenDao.saveAndFlush(accessToken);
         return 0;
@@ -38,7 +39,7 @@ public class AccessTokenServiceImpl implements AccessTokenService {
     }
 
     @Override
-    @Cacheable(key = "#p0")
+    @Cacheable(key = "'accessToken_'+#id")
     public AccessToken selectByPrimaryKey(long id) {
         return accessTokenDao.findById(id);
     }
@@ -51,9 +52,9 @@ public class AccessTokenServiceImpl implements AccessTokenService {
     }
 
     @Override
-    @Cacheable(key = "#p0")
-    public int updateByPrimaryKey(AccessToken accessToken) {
+    @CachePut(key = "'accessToken_'+#accessToken.getId()")
+    public AccessToken updateByPrimaryKey(AccessToken accessToken) {
         accessTokenDao.saveAndFlush(accessToken);
-        return 0;
+        return accessToken;
     }
 }

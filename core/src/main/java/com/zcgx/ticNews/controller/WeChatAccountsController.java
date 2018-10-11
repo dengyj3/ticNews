@@ -1,7 +1,11 @@
 package com.zcgx.ticNews.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.zcgx.ticNews.service.WeChatCoreService;
+import com.zcgx.ticNews.util.Response;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +18,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 @RestController
-@RequestMapping("/account")
+@RequestMapping("/wx")
 @CrossOrigin
 public class WeChatAccountsController {
     private final static Logger logger = LoggerFactory.getLogger(WeChatAccountsController.class);
@@ -29,7 +33,7 @@ public class WeChatAccountsController {
     private final String TOKEN = "springbird";
 
     @ApiOperation(value = "测试token", notes = "测试token")
-    @RequestMapping(value = "/login",method = RequestMethod.GET)
+    @RequestMapping(value = "/process",method = RequestMethod.GET)
     public String login(@RequestParam("signature") String signature,
                                    @RequestParam("timestamp") String timestamp,
                                    @RequestParam("nonce") String nonce,
@@ -109,11 +113,27 @@ public class WeChatAccountsController {
      * @return
      */
     @ApiOperation(value = "测试token", notes = "测试token")
-    @RequestMapping(value = "/login",method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
+    @RequestMapping(value = "/process",method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
     public String processRequest(HttpServletRequest request, HttpServletResponse response){
         logger.info("enter process......");
         String respMsg = weChatCoreService.processRequest(request);
         return respMsg;
     }
 
+    @ApiOperation(value = "解密小程序数据", notes = "解密小程序数据")
+    @ApiImplicitParam(name = "jsonObject", value = "小程序用户信息", required = true, dataType = "JSONObject")
+    @RequestMapping(value = "/descrypt",method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    public Response<String> descrypt(@RequestBody JSONObject jsonObject){
+        logger.info("enter descrypt......" + jsonObject.toJSONString());
+        String code = jsonObject.getString("code");
+        String encryptedData = jsonObject.getString("encryptedData");
+        String iv = jsonObject.getString("iv");
+        String result = weChatCoreService.decrypt(code, encryptedData, iv);
+        if (StringUtils.isNotBlank(result)){
+            return Response.ok(result);
+        }else {
+
+            return Response.error("解密小程序数据错误!!!");
+        }
+    }
 }
