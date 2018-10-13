@@ -35,4 +35,21 @@ public class DateUtils {
         currentDate = calendar.getTime();
         return dateFormat2.format(currentDate);
     }
+
+    /**
+     * 获取当天的星期
+     * @param date
+     * @return
+     * @throws ParseException
+     */
+    public static String dateToWeek(Date date) throws ParseException  {
+        String[] weekDays = { "星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六" };
+        Calendar cal = Calendar.getInstance(); // 获得一个日历
+        cal.setTime(date);
+        int w = cal.get(Calendar.DAY_OF_WEEK) - 1; // 指示一个星期中的某天。
+        if (w < 0)
+            w = 0;
+        return weekDays[w];
+    }
+
 }

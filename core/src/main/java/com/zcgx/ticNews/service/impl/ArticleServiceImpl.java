@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -157,6 +158,13 @@ public class ArticleServiceImpl implements ArticleService {
             articleDTO.setVoteNegtiveCount(article.getVoteNegtiveCount());
             articleDTO.setUrl(article.getUrl());
             articleDTO.setSource(article.getSource());
+            articleDTO.setToday(DateUtils.getDateYMD(new Date()));
+            try {
+                articleDTO.setWeekOfToday(DateUtils.dateToWeek(new Date()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+                logger.error("日期格式错误！ " + new Date());
+            }
             articleDTOList.add(articleDTO);
         });
         return Response.ok(articleDTOList);
