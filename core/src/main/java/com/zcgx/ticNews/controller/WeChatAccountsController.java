@@ -134,6 +134,7 @@ public class WeChatAccountsController {
             encryptedData = URLDecoder.decode(encryptedData, "UTF-8");
             String iv = jsonObject.getString("iv");
             iv = URLDecoder.decode(iv, "UTF-8");
+            logger.info("after decode code is : {} ; encryptedData is : {} ; iv is : {} ", code, encryptedData, iv);
             String result = weChatCoreService.decrypt(code, encryptedData, iv);
             if (StringUtils.isNotBlank(result)){
                 return Response.ok(result);
