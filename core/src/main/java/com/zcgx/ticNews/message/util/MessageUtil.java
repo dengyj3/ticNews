@@ -136,7 +136,6 @@ public class MessageUtil {
         }        // 释放资源
         inputStream.close();
         inputStream = null;
-        System.out.println("---------xml转换为map-----:" + map);
         return map;
     }
 

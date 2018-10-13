@@ -6,6 +6,7 @@ import com.zcgx.ticNews.dao.UserDao;
 import com.zcgx.ticNews.po.User;
 import com.zcgx.ticNews.service.UserService;
 import com.zcgx.ticNews.service.WeChatCoreService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,8 +58,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean checkIsScribe(String openid) {
         String accessToken = weChatCoreService.getAccessToken();
-        String result = weChatCoreService.getUserInfo(accessToken, openid);
-        JSONObject jsonObject = JSON.parseObject(result);
-        return 1 == jsonObject.getInteger("subscribe");
+        if (StringUtils.isNotBlank(accessToken)) {
+            String result = weChatCoreService.getUserInfo(accessToken, openid);
+            JSONObject jsonObject = JSON.parseObject(result);
+            return 1 == jsonObject.getInteger("subscribe");
+        }
+        return false;
     }
 }

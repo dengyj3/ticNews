@@ -89,7 +89,7 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
             }	else if (msgType.equals(MessageUtil.REQ_MESSAGE_TYPE_EVENT)) { 					// 事件推送(当用户主动点击菜单，或者扫面二维码等事件)
                 // 事件类型
                 String  eventType =requestMap.get("Event");
-                System.out.println("eventType------>"+eventType);
+                logger.info("eventType------>"+eventType);
                 // 关注
                 if (eventType.equals(MessageUtil.EVENT_TYPE_SUBSCRIBE)){// 用户关注时保存用户信息
                     getUserInfo(getAccessToken(), fromUserName);// 保存用户信息
@@ -155,7 +155,7 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
                 accessTokenService.updateByPrimaryKey(accessToken);
             }
         }
-        return accessToken.getAccessToken();
+        return accessToken != null ? accessToken.getAccessToken() : null;
     }
 
     @Override
@@ -187,6 +187,10 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
 
     @Override
     public void cancelAttention(String token, String openid) {
+        if (StringUtils.isBlank(token)){
+            logger.error("return access_token is null. ");
+            return;
+        }
         JSONObject jsonObject = MessageModelUtil.getUserInfo(token, openid);
         User user = userService.findByOpenId(openid);
         user.setSubscribe(jsonObject.getInteger("subscribe"));

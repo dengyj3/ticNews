@@ -33,7 +33,7 @@ public class ArticleManageController {
     @ApiOperation(value = "添加文章")
     @ApiImplicitParam(name = "jsonObject", value = "Article实体列表", required = true, dataType = "Article", example = "{\"summary\":\"summaryTest\",\"voteNegtiveCount\":0,\"source\":\"resourceTest\",\"votePositiveCount\":1,\"title\":\"titleTest\",\"votePositiveName\":\"赞同\",\"content\":\"contentTest\",\"url\":\"http://www.baidu.com\",\"voteNegtiveName\":\"不赞同\",\"tags\":[\"检测\",\"认证\"]}")
     @RequestMapping(value = "/addArticle", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-    public Response<String> addArticle(@RequestBody JSONObject jsonObject){
+    public Response<Article> addArticle(@RequestBody JSONObject jsonObject){
         try {
             Article article = new Article();
             article.setTitle(jsonObject.getString("title"));
@@ -46,7 +46,6 @@ public class ArticleManageController {
             article.setVoteNegtiveName(jsonObject.getString("voteNegtiveName"));
             article.setVoteNegtiveCount(jsonObject.getInteger("voteNegtiveCount"));
             articleService.addArticle(article);
-            System.out.println(article.getId());
             List<String> tagList = (List<String>) jsonObject.get("tags");
             if (tagList.size()>0) {
                 tagList.stream().forEach(t -> {
@@ -60,7 +59,7 @@ public class ArticleManageController {
                 });
             }
 
-            return Response.ok("SUCCESS");
+            return Response.ok(article);
         }catch (Exception e){
             logger.error("新增文章失败! " + e);
             return Response.error("新增文章失败! " + e);
@@ -80,7 +79,7 @@ public class ArticleManageController {
 
     @ApiOperation(value = "修改文章")
     @RequestMapping(value = "/updateArticle", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-    public Response<String> updateArticle(@RequestBody JSONObject jsonObject){
+    public Response<Article> updateArticle(@RequestBody JSONObject jsonObject){
         try {
             long id = jsonObject.getLong("id");
             Article article = articleService.queryArticle(id);
@@ -96,7 +95,7 @@ public class ArticleManageController {
             article.setUpdateTime(new Date());
             article.setId(id);
             articleService.updateArticle(article);
-            return Response.ok("SUCCESS");
+            return Response.ok(article);
         }catch (Exception e){
             logger.error("更新文章失败! " + e);
             return Response.error("更新文章失败! " + e);
