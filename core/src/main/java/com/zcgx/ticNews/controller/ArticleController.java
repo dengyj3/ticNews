@@ -53,7 +53,7 @@ public class ArticleController {
         try {
             long id = jsonObject.getInteger("id");
             String vote = jsonObject.getString("vote");
-            String unionid = jsonObject.getString("uniondid");
+            String unionid = jsonObject.getString("unionid");
             return articleService.operation(id, vote, unionid);
         }catch (Exception e){
             logger.error("用户表态失败! " + e);
