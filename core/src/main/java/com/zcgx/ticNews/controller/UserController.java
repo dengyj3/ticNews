@@ -31,10 +31,6 @@ public class UserController {
             }
             if (userInfo.containsKey("subscribe")) {
                 user.setSubscribe(userInfo.getInteger("subscribe"));
-            }else {
-                if (userService.checkIsScribe(userInfo.getString("openid"))){
-                    user.setSubscribe(1);
-                }
             }
             if (userInfo.containsKey("remark")) {
                 user.setRemark(userInfo.getString("remark"));
