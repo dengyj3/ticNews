@@ -52,4 +52,7 @@ public class DateUtils {
         return weekDays[w];
     }
 
+    public static Date stringToDate(String date) throws Exception{
+        return dateFormat2.parse(date);
+    }
 }

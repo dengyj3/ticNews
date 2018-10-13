@@ -144,8 +144,9 @@ public class ArticleServiceImpl implements ArticleService {
         List<Article> articleList = articleDao.findArticleByCreateTime(date);
         List<ArticleDTO> articleDTOList = new ArrayList<>();
         DailyArticleDTO dailyArticleDTO = new DailyArticleDTO();
-        dailyArticleDTO.setToday(DateUtils.getDateYMD(new Date()));
-        dailyArticleDTO.setWeekOfToday(DateUtils.dateToWeek(new Date()));
+        Date tDate = DateUtils.stringToDate(date);
+        dailyArticleDTO.setToday(DateUtils.getDateYMD(tDate));
+        dailyArticleDTO.setWeekOfToday(DateUtils.dateToWeek(tDate));
         articleList.stream().forEach(article -> {
             ArticleDTO articleDTO = new ArticleDTO();
             articleDTO.setId(article.getId());
