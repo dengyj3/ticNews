@@ -196,7 +196,7 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
         String url = "https://api.weixin.qq.com/sns/jscode2session?appid="+xcxAppId + "&secret=" + xcxAppSecret + "&js_code=" + code + "&grant_type=authorization_code";
         JSONObject jsonObject = WeixinUtil.httpRequest(url, "GET", null);
         logger.info("code2session return is : " + jsonObject.toJSONString());
-        if (jsonObject.getInteger("errcode") == 0){
+        if (jsonObject.containsKey("session_key")){
             String sessionKey = jsonObject.getString("session_key");
             result = AESUtil.decrypt(xcxAppId, encryptedData, sessionKey, iv, WATERMARK);
             logger.info("descrypt user info is : " + result);
