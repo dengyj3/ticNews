@@ -140,4 +140,25 @@ public class ArticleServiceImpl implements ArticleService {
         articleDao.deleteById(id);
         return 0;
     }
+
+    @Override
+    public Response<List<ArticleDTO>> queryDailyArticle(String date) throws Exception {
+        List<Article> articleList = articleDao.findArticleByCreateTime(date);
+        List<ArticleDTO> articleDTOList = new ArrayList<>();
+        articleList.stream().forEach(article -> {
+            ArticleDTO articleDTO = new ArticleDTO();
+            articleDTO.setId(article.getId());
+            articleDTO.setCreateTime(DateUtils.getDateStr(article.getCreateTime()));
+            articleDTO.setSummary(article.getSummary());
+            articleDTO.setTitle(article.getTitle());
+            articleDTO.setVotePositiveName(article.getVotePositiveName());
+            articleDTO.setVotePositiveCount(article.getVotePositiveCount());
+            articleDTO.setVoteNegtiveName(article.getVoteNegtiveName());
+            articleDTO.setVoteNegtiveCount(article.getVoteNegtiveCount());
+            articleDTO.setUrl(article.getUrl());
+            articleDTO.setSource(article.getSource());
+            articleDTOList.add(articleDTO);
+        });
+        return Response.ok(articleDTOList);
+    }
 }

@@ -22,4 +22,6 @@ public interface ArticleService {
     Article queryArticle(long id) throws Exception;
 
     int deleteArticle(long id) throws Exception;
+
+    Response<List<ArticleDTO>> queryDailyArticle(String date) throws Exception;
 }

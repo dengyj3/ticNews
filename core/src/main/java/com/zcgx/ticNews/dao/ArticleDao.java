@@ -31,4 +31,7 @@ public interface ArticleDao extends JpaRepository<Article, Long>, JpaSpecificati
     @Transactional
     @Query(value = "update jianbao.tbl_article_list set vote_negtive_count=vote_negtive_count+1 where id=?1", nativeQuery = true)
     int updateVoteNegtiveCountById(long id);
+
+    @Query(value = "select * from jianbao.tbl_article_list where DATE_FORMAT(create_time,'%Y-%m-%d') = ?1 order by id desc limit 10", nativeQuery = true)
+    List<Article> findArticleByCreateTime(String date);
 }
