@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -126,14 +128,21 @@ public class WeChatAccountsController {
     public Response<String> descrypt(@RequestBody JSONObject jsonObject){
         logger.info("enter descrypt......" + jsonObject.toJSONString());
         String code = jsonObject.getString("code");
-        String encryptedData = jsonObject.getString("encryptedData");
-        String iv = jsonObject.getString("iv");
-        String result = weChatCoreService.decrypt(code, encryptedData, iv);
-        if (StringUtils.isNotBlank(result)){
-            return Response.ok(result);
-        }else {
-
-            return Response.error("解密小程序数据错误!!!");
+        try {
+            code = URLDecoder.decode(code, "UTF-8");
+            String encryptedData = jsonObject.getString("encryptedData");
+            encryptedData = URLDecoder.decode(encryptedData, "UTF-8");
+            String iv = jsonObject.getString("iv");
+            iv = URLDecoder.decode(iv, "UTF-8");
+            String result = weChatCoreService.decrypt(code, encryptedData, iv);
+            if (StringUtils.isNotBlank(result)){
+                return Response.ok(result);
+            }else {
+                return Response.error("解密小程序数据错误!!!");
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return Response.error("输入参数解码错误！！！" );
         }
     }
 }
