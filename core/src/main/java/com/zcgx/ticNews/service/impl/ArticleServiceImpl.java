@@ -80,7 +80,7 @@ public class ArticleServiceImpl implements ArticleService {
             if (StringUtils.isNotBlank(unionid)){
                 Vote vote = voteDao.findByArticleIdAndUnionid(id, unionid);
                 articleDTO.setVote(vote.getVote());
-                articleDTO.setUniond(vote.getUnionid());
+                articleDTO.setUnionid(vote.getUnionid());
             }
             List<EventTrackVo> eventTracking = new ArrayList<>();
             articleEvent.stream().forEach(article1 -> {
