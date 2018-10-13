@@ -1,15 +1,12 @@
 package com.zcgx.ticNews.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.zcgx.ticNews.dao.ArticleDao;
 import com.zcgx.ticNews.dao.TagArticleRelationDao;
-import com.zcgx.ticNews.dao.TagDao;
 import com.zcgx.ticNews.dao.VoteDao;
 import com.zcgx.ticNews.dto.ArticleDTO;
 import com.zcgx.ticNews.dto.DailyArticleDTO;
 import com.zcgx.ticNews.dto.EventTrackVo;
 import com.zcgx.ticNews.po.Article;
-import com.zcgx.ticNews.po.TagArticleRelation;
 import com.zcgx.ticNews.po.Vote;
 import com.zcgx.ticNews.service.ArticleService;
 import com.zcgx.ticNews.service.TagArticleRelationService;
@@ -22,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
