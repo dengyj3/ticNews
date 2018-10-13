@@ -69,7 +69,7 @@ public class ArticleController {
 
     @ApiOperation(value = "获取早报文章列表", notes = "根据请求日期文章列表")
     @RequestMapping(value = "/daily/{date}",method = RequestMethod.GET)
-    public Response<List<ArticleDTO>> dailyArticle(@RequestParam(required = true) String date){
+    public Response<List<ArticleDTO>> dailyArticle(@PathVariable(required = true) String date){
         try {
             logger.info("receive date is : " + date);
             if (StringUtils.isNotBlank(date)){
