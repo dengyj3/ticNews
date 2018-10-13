@@ -129,6 +129,7 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
         if (accessToken != null){
             logger.info("CreateTime: " + accessToken.getCreateDate() + " NOW: "+new Date().getTime() +"\n"+ Long.parseLong(accessToken.getExpiresin()));
         }
+        // 如果access_token过期，则重新获取token并更新数据库
         if (accessToken == null || accessToken.getCreateDate().getTime() + Long.parseLong(accessToken.getExpiresin()) * 1000 < new Date().getTime()){
             if (StringUtils.isBlank(appId)){
                 logger.error("appId maybe null. receive appid is : " + appId);
@@ -147,10 +148,12 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
                 accessToken.setExpiresin(jsonObject.getString("expires_in"));
                 accessToken.setCreateDate(new Date());
             }
-            if (accessToken == null){
-                accessTokenService.insert(accessToken);
+//            if (accessToken == null){
+//                accessTokenService.insert(accessToken);
+//            }
+            if (accessToken != null) {
+                accessTokenService.updateByPrimaryKey(accessToken);
             }
-            accessTokenService.updateByPrimaryKey(accessToken);
         }
         return accessToken.getAccessToken();
     }
