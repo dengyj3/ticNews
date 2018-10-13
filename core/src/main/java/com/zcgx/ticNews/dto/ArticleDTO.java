@@ -15,24 +15,6 @@ public class ArticleDTO {
     private String source;
     private String uniond;
     private String vote;
-    private String today;
-    private String weekOfToday;
-
-    public String getToday() {
-        return today;
-    }
-
-    public void setToday(String today) {
-        this.today = today;
-    }
-
-    public String getWeekOfToday() {
-        return weekOfToday;
-    }
-
-    public void setWeekOfToday(String weekOfToday) {
-        this.weekOfToday = weekOfToday;
-    }
 
     public String getSource() {
         return source;

@@ -2,6 +2,7 @@ package com.zcgx.ticNews.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zcgx.ticNews.dto.ArticleDTO;
+import com.zcgx.ticNews.dto.DailyArticleDTO;
 import com.zcgx.ticNews.po.Article;
 import com.zcgx.ticNews.util.PageList;
 import com.zcgx.ticNews.util.Response;
@@ -23,5 +24,5 @@ public interface ArticleService {
 
     int deleteArticle(long id) throws Exception;
 
-    Response<List<ArticleDTO>> queryDailyArticle(String date) throws Exception;
+    Response<DailyArticleDTO> queryDailyArticle(String date) throws Exception;
 }

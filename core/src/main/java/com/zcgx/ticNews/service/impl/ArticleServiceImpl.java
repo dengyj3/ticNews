@@ -6,6 +6,7 @@ import com.zcgx.ticNews.dao.TagArticleRelationDao;
 import com.zcgx.ticNews.dao.TagDao;
 import com.zcgx.ticNews.dao.VoteDao;
 import com.zcgx.ticNews.dto.ArticleDTO;
+import com.zcgx.ticNews.dto.DailyArticleDTO;
 import com.zcgx.ticNews.dto.EventTrackVo;
 import com.zcgx.ticNews.po.Article;
 import com.zcgx.ticNews.po.TagArticleRelation;
@@ -143,9 +144,12 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public Response<List<ArticleDTO>> queryDailyArticle(String date) throws Exception {
+    public Response<DailyArticleDTO> queryDailyArticle(String date) throws Exception {
         List<Article> articleList = articleDao.findArticleByCreateTime(date);
         List<ArticleDTO> articleDTOList = new ArrayList<>();
+        DailyArticleDTO dailyArticleDTO = new DailyArticleDTO();
+        dailyArticleDTO.setToday(DateUtils.getDateYMD(new Date()));
+        dailyArticleDTO.setWeekOfToday(DateUtils.dateToWeek(new Date()));
         articleList.stream().forEach(article -> {
             ArticleDTO articleDTO = new ArticleDTO();
             articleDTO.setId(article.getId());
@@ -158,15 +162,9 @@ public class ArticleServiceImpl implements ArticleService {
             articleDTO.setVoteNegtiveCount(article.getVoteNegtiveCount());
             articleDTO.setUrl(article.getUrl());
             articleDTO.setSource(article.getSource());
-            articleDTO.setToday(DateUtils.getDateYMD(new Date()));
-            try {
-                articleDTO.setWeekOfToday(DateUtils.dateToWeek(new Date()));
-            } catch (ParseException e) {
-                e.printStackTrace();
-                logger.error("日期格式错误！ " + new Date());
-            }
             articleDTOList.add(articleDTO);
         });
-        return Response.ok(articleDTOList);
+        dailyArticleDTO.setArticleDTOList(articleDTOList);
+        return Response.ok(dailyArticleDTO);
     }
 }
