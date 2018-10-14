@@ -83,7 +83,7 @@ public class MessageModelUtil {
         textMessage.setMsgType(MessageUtil.RESP_MESSAGE_TYPE_TEXT);
         textMessage.setMsgId(0);
         textMessage.setCreateTime(new Date().getTime());
-        textMessage.setContent("欢迎关注有质优品，获取每天3分钟的科技资讯速览。\n<a href=\"https://ticnews.labyun.cn/daily?date="+ DateUtils.getDateYMD1(new Date()) +"\">欢迎订阅TIC早报</a>");
+        textMessage.setContent("欢迎关注TIC学院，获取每天3分钟的行业科技资讯速览。\n<a href=\"https://ticnews.labyun.cn/daily?date="+ DateUtils.getDateYMD1(new Date()) +"\">欢迎订阅TIC早报</a>");
         return MessageUtil.textMessageToXml(textMessage);
     }
 
