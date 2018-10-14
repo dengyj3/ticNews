@@ -267,7 +267,7 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
         jsonObject.put("access_token", accessToken);
         jsonObject.put("scene", "id="+wxaCodeParams.getId());
         jsonObject.put("page", wxaCodeParams.getPage());
-        jsonObject.put("width", wxaCodeParams.getWidth());
+        jsonObject.put("width", wxaCodeParams.getWidth()+"px");
         jsonObject.put("auto_color", false);
         JSONObject color = new JSONObject();
         color.put("r", wxaCodeParams.getColorR());
