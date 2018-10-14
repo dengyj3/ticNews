@@ -141,7 +141,9 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
                 return null;
             }
             String accessTokenUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + appId + "&secret=" + appKey;
+            logger.info("get access_token url is : " + accessTokenUrl);
             JSONObject jsonObject = WeixinUtil.httpRequest(accessTokenUrl, "GET", null);
+            logger.info("access_token return is : " + jsonObject.toJSONString());
             if (jsonObject.containsKey("access_token") && jsonObject.containsKey("expires_in")){
                 accessToken = new AccessToken();
                 accessToken.setId(1);
