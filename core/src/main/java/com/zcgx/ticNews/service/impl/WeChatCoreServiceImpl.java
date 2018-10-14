@@ -175,14 +175,20 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
         logger.info("user info return is : " + result);
         if (StringUtils.isNotBlank(result)){
             JSONObject jsonObject = (JSONObject) JSON.parse(result);
-            if (jsonObject.containsKey("errorcode")){
+            if (jsonObject.containsKey("errcode")){
                 return result;
             }
             User user = new User();
             user.setOpenid(openid);
-            user.setSubscribe(jsonObject.getInteger("subscribe"));
-            user.setRemark(jsonObject.getString("remark"));
-            user.setUnionid(jsonObject.getString("unionid"));
+            if (jsonObject.containsKey("subscribe")) {
+                user.setSubscribe(jsonObject.getInteger("subscribe"));
+            }
+            if (jsonObject.containsKey("remark")) {
+                user.setRemark(jsonObject.getString("remark"));
+            }
+            if (jsonObject.containsKey("unionid")) {
+                user.setUnionid(jsonObject.getString("unionid"));
+            }
             userService.saveUser(user);
             return result;
         }
