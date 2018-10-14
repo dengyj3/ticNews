@@ -126,6 +126,7 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
 
     @Override
     public String getAccessToken() {
+        logger.info("enter weixin gongzhonghao get access_token ......");
         AccessToken accessToken = accessTokenService.selectByPrimaryKey(1);
         if (accessToken != null){
             logger.info("CreateTime: " + accessToken.getCreateDate() + " NOW: "+new Date().getTime() +"\n"+ Long.parseLong(accessToken.getExpiresin()));
