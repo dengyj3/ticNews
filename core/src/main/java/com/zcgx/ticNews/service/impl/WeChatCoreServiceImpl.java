@@ -225,6 +225,7 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
 
     @Override
     public String getXCXAccessToken() {
+        logger.info("enter get xcx access_token ...... ");
         AccessToken accessToken = accessTokenService.selectByPrimaryKey(2);
         if (accessToken != null){
             logger.info("CreateTime: " + accessToken.getCreateDate() + " NOW: "+new Date().getTime() +"\n"+ Long.parseLong(accessToken.getExpiresin()));
@@ -263,7 +264,7 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
             logger.error("小程序返回的access_token为\"\"或null ... " );
             return null;
         }
-        jsonObject.put("access_token", getXCXAccessToken());
+        jsonObject.put("access_token", accessToken);
         jsonObject.put("scene", "id="+wxaCodeParams.getId());
         jsonObject.put("page", wxaCodeParams.getPage());
         jsonObject.put("width", wxaCodeParams.getWidth());
@@ -274,7 +275,7 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
         color.put("b", wxaCodeParams.getColorB());
         jsonObject.put("line_color", color);
         jsonObject.put("is_hyaline", wxaCodeParams.getIsHyaline());
-        String url = "https://api.weixin.qq.com/wxa/getwxacodeunlimit";
+        String url = "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token="+accessToken;
         JSONObject result = WeixinUtil.httpRequest(url, "POST", jsonObject.toJSONString());
         return result;
     }
