@@ -61,3 +61,10 @@ create table `tbl_vote`(
 	`vote` varchar(1) COMMENT '投票',
 	PRIMARY KEY (`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='投票表';
+
+drop table `tbl_url_config`;
+create table `tbl_url_config`(
+	`id` int(11) NOT NULL AUTO_INCREMENT,
+	`url` varchar(255) COMMENT '订阅早报URL',
+	PRIMARY KEY (`id`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='配置表';

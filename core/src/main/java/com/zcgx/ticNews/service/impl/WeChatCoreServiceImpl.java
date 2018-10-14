@@ -2,6 +2,7 @@ package com.zcgx.ticNews.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.zcgx.ticNews.dao.UrlConfigDao;
 import com.zcgx.ticNews.message.resp.TextMessage;
 import com.zcgx.ticNews.message.util.MessageModelUtil;
 import com.zcgx.ticNews.params.WXACodeParams;
@@ -33,6 +34,8 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
 
     @Autowired
     private AccessTokenService accessTokenService;
+    @Autowired
+    private UrlConfigDao urlConfigDao;
 
     @Value("${wx.appId}")
     private String appId = "";
@@ -94,7 +97,7 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
                 // 关注
                 if (eventType.equals(MessageUtil.EVENT_TYPE_SUBSCRIBE)){// 用户关注时保存用户信息
                     getUserInfo(getAccessToken(), fromUserName);// 保存用户信息
-                    respMessage = MessageModelUtil.followResponseMessageModel1(textMessage);
+                    respMessage = MessageModelUtil.followResponseMessageModel1(textMessage, urlConfigDao.findById(1).getUrl());
                 }else if (eventType.equals(MessageUtil.EVENT_TYPE_UNSUBSCRIBE)) {// 取消关注
                     getUserInfo(getAccessToken(), fromUserName);// 更新用户信息
                     cancelAttention(getAccessToken(),fromUserName);
@@ -215,11 +218,12 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
         String url = "https://api.weixin.qq.com/sns/jscode2session?appid="+xcxAppId + "&secret=" + xcxAppSecret + "&js_code=" + code + "&grant_type=authorization_code";
         JSONObject jsonObject = WeixinUtil.httpRequest(url, "GET", null);
         logger.info("code2session return is : " + jsonObject.toJSONString());
-        if (jsonObject.containsKey("session_key")){
-            String sessionKey = jsonObject.getString("session_key");
-            result = AESUtil.decrypt(xcxAppId, encryptedData, sessionKey, iv, WATERMARK);
-            logger.info("descrypt user info is : " + result);
-        }
+//        if (jsonObject.containsKey("session_key")){
+//            String sessionKey = jsonObject.getString("session_key");
+//            result = AESUtil.decrypt(xcxAppId, encryptedData, sessionKey, iv, WATERMARK);
+//            logger.info("descrypt user info is : " + result);
+//        }
+        result = jsonObject.toJSONString();
         return result;
     }
 
