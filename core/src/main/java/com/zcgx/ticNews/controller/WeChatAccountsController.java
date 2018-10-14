@@ -121,6 +121,7 @@ public class WeChatAccountsController {
     public String processRequest(HttpServletRequest request, HttpServletResponse response){
         logger.info("enter process......");
         String respMsg = weChatCoreService.processRequest(request);
+        logger.debug("send message is : " + respMsg);
         return respMsg;
     }
 
