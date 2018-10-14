@@ -34,7 +34,7 @@ public class WeChatAccountsController {
      * 自定义token, 用作生成签名,从而验证安全性, TODO: token需要修改为实际的
      * */
     @Value("${wx.token}")
-    private final String TOKEN = "springbird";
+    private final String TOKEN = "mikamika";
 
     @ApiOperation(value = "测试token", notes = "测试token")
     @RequestMapping(value = "/process",method = RequestMethod.GET)
