@@ -8,6 +8,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.zcgx.ticNews.message.resp.Article;
 import com.zcgx.ticNews.message.resp.NewsMessage;
 import com.zcgx.ticNews.message.resp.TextMessage;
+import com.zcgx.ticNews.util.DateUtils;
 import com.zcgx.ticNews.util.WeixinUtil;
 
 /**
@@ -67,6 +68,23 @@ public class MessageModelUtil {
         newsMessage.setArticleCount(articleList.size());
         newsMessage.setArticles(articleList);
         return MessageUtil.newsMessageToXml(newsMessage);
+    }
+    /**
+     * @Description: 用户关注时发送的文本消息
+     * @Parameters: MessageModelUtil
+     * @Return: 用户关注后发送的提示绑定用户的文本消息
+     * @Create Date:
+     * @Version: V1.00
+     * @author:
+     */
+    public static String followResponseMessageModel1(TextMessage textMessage) {
+
+        textMessage.setCreateTime(new Date().getTime());
+        textMessage.setMsgType(MessageUtil.RESP_MESSAGE_TYPE_TEXT);
+        textMessage.setMsgId(0);
+        textMessage.setCreateTime(new Date().getTime());
+        textMessage.setContent("欢迎关注有质优品，获取每天3分钟的科技资讯速览。\n<a href=\"https://ticnews.labyun.cn/daily?date="+ DateUtils.getDateYMD1(new Date()) +"\">欢迎订阅TIC早报</a>");
+        return MessageUtil.textMessageToXml(textMessage);
     }
 
     /**

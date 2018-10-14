@@ -94,7 +94,7 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
                 // 关注
                 if (eventType.equals(MessageUtil.EVENT_TYPE_SUBSCRIBE)){// 用户关注时保存用户信息
                     getUserInfo(getAccessToken(), fromUserName);// 保存用户信息
-//                    respMessage = MessageModelUtil.followResponseMessageModel(textMessage);
+                    respMessage = MessageModelUtil.followResponseMessageModel1(textMessage);
                 }else if (eventType.equals(MessageUtil.EVENT_TYPE_UNSUBSCRIBE)) {// 取消关注
                     getUserInfo(getAccessToken(), fromUserName);// 更新用户信息
                     cancelAttention(getAccessToken(),fromUserName);
