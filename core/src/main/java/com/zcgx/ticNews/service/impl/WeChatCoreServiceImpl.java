@@ -132,6 +132,7 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
         }
         // 如果access_token过期，则重新获取token并更新数据库
         if (accessToken == null || accessToken.getCreateDate().getTime() + Long.parseLong(accessToken.getExpiresin()) * 1000 < new Date().getTime()){
+            logger.info("enter renew access_token ......");
             if (StringUtils.isBlank(appId)){
                 logger.error("appId maybe null. receive appid is : " + appId);
                 return null;
