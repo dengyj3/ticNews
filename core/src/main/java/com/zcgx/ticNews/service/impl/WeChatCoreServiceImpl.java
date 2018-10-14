@@ -172,6 +172,7 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
             return null;
         }
         String result = MessageModelUtil.getUserInfo(accessToken, openid).toJSONString();
+        logger.info("user info return is : " + result);
         if (StringUtils.isNotBlank(result)){
             JSONObject jsonObject = (JSONObject) JSON.parse(result);
             if (jsonObject.containsKey("errorcode")){
