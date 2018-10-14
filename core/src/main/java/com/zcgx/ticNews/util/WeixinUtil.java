@@ -48,6 +48,10 @@ public class WeixinUtil {
             if ("GET".equalsIgnoreCase(requestMethod)) {
                 httpsURLConnection.connect();
             }
+            if ("POST".equalsIgnoreCase(requestMethod)){
+                httpsURLConnection.setRequestProperty("Content-type", "application/json;charset=UTF-8");
+                httpsURLConnection.connect();
+            }
             // 当有数据需要提交时
             if (null != outputStr) {
                 OutputStream outputStream = httpsURLConnection.getOutputStream();
