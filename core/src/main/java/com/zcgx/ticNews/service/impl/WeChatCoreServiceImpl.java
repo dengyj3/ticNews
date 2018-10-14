@@ -275,8 +275,10 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
         color.put("b", wxaCodeParams.getColorB());
         jsonObject.put("line_color", color);
         jsonObject.put("is_hyaline", wxaCodeParams.getIsHyaline());
+        String params = jsonObject.toJSONString();
+        logger.info("xcode params is : " + params);
         String url = "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token="+accessToken;
-        JSONObject result = WeixinUtil.httpRequest(url, "POST", jsonObject.toJSONString());
+        JSONObject result = WeixinUtil.httpRequest(url, "POST", params);
         return result;
     }
 
