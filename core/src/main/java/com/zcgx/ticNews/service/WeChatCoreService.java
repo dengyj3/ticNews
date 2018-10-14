@@ -1,5 +1,7 @@
 package com.zcgx.ticNews.service;
 
+import com.zcgx.ticNews.params.WXACodeParams;
+
 import javax.servlet.http.HttpServletRequest;
 
 public interface WeChatCoreService {
@@ -32,4 +34,17 @@ public interface WeChatCoreService {
     void cancelAttention(String token, String openid);
 
     String decrypt(String code, String encryptedData, String iv);
+
+    /**
+     * 获取小程序access_token的接口地址（GET） 限200（次/天）
+     * @return
+     */
+    String getXCXAccessToken();
+
+    /**
+     * 获取小程序的二维码
+     * @param wxaCodeParams
+     * @return
+     */
+    Object getWXACodeUnlimit(WXACodeParams wxaCodeParams);
 }

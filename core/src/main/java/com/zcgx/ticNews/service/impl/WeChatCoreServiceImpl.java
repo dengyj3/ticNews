@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.zcgx.ticNews.message.resp.TextMessage;
 import com.zcgx.ticNews.message.util.MessageModelUtil;
+import com.zcgx.ticNews.params.WXACodeParams;
 import com.zcgx.ticNews.po.AccessToken;
 import com.zcgx.ticNews.po.User;
 import com.zcgx.ticNews.service.AccessTokenService;
@@ -141,7 +142,7 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
             }
             String accessTokenUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + appId + "&secret=" + appKey;
             JSONObject jsonObject = WeixinUtil.httpRequest(accessTokenUrl, "GET", null);
-            if (jsonObject.getString("errorcode") == null){
+            if (jsonObject.containsKey("access_token") && jsonObject.containsKey("expires_in")){
                 accessToken = new AccessToken();
                 accessToken.setId(1);
                 accessToken.setAccessToken(jsonObject.getString("access_token"));
@@ -208,6 +209,62 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
             result = AESUtil.decrypt(xcxAppId, encryptedData, sessionKey, iv, WATERMARK);
             logger.info("descrypt user info is : " + result);
         }
+        return result;
+    }
+
+    @Override
+    public String getXCXAccessToken() {
+        AccessToken accessToken = accessTokenService.selectByPrimaryKey(2);
+        if (accessToken != null){
+            logger.info("CreateTime: " + accessToken.getCreateDate() + " NOW: "+new Date().getTime() +"\n"+ Long.parseLong(accessToken.getExpiresin()));
+        }
+        // 如果access_token过期，则重新获取token并更新数据库
+        if (accessToken == null || accessToken.getCreateDate().getTime() + Long.parseLong(accessToken.getExpiresin()) * 1000 < new Date().getTime()){
+            if (StringUtils.isBlank(xcxAppId)){
+                logger.error("appId maybe null. receive appid is : " + xcxAppId);
+                return null;
+            }
+            if (StringUtils.isBlank(xcxAppSecret)){
+                logger.error("appKey maybe null. receive appKey is : " + xcxAppSecret);
+                return null;
+            }
+            String accessTokenUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + xcxAppId + "&secret=" + xcxAppSecret;
+            JSONObject jsonObject = WeixinUtil.httpRequest(accessTokenUrl, "GET", null);
+            if (jsonObject.containsKey("access_token") && jsonObject.containsKey("expires_in")){
+                accessToken = new AccessToken();
+                accessToken.setId(2);
+                accessToken.setAccessToken(jsonObject.getString("access_token"));
+                accessToken.setExpiresin(jsonObject.getString("expires_in"));
+                accessToken.setCreateDate(new Date());
+            }
+            if (accessToken != null) {
+                accessTokenService.updateByPrimaryKey(accessToken);
+            }
+        }
+        return accessToken != null ? accessToken.getAccessToken() : null;
+    }
+
+    @Override
+    public Object getWXACodeUnlimit(WXACodeParams wxaCodeParams) {
+        JSONObject jsonObject = new JSONObject();
+        String accessToken = getXCXAccessToken();
+        if (StringUtils.isBlank(accessToken)){
+            logger.error("小程序返回的access_token为\"\"或null ... " );
+            return null;
+        }
+        jsonObject.put("access_token", getXCXAccessToken());
+        jsonObject.put("scene", "id="+wxaCodeParams.getId());
+        jsonObject.put("page", wxaCodeParams.getPage());
+        jsonObject.put("width", wxaCodeParams.getWidth());
+        jsonObject.put("auto_color", false);
+        JSONObject color = new JSONObject();
+        color.put("r", wxaCodeParams.getColorR());
+        color.put("g", wxaCodeParams.getColorG());
+        color.put("b", wxaCodeParams.getColorB());
+        jsonObject.put("line_color", color);
+        jsonObject.put("is_hyaline", wxaCodeParams.getIsHyaline());
+        String url = "https://api.weixin.qq.com/wxa/getwxacodeunlimit";
+        JSONObject result = WeixinUtil.httpRequest(url, "POST", jsonObject.toJSONString());
         return result;
     }
 

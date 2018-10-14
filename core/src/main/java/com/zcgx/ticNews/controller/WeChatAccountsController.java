@@ -1,6 +1,8 @@
 package com.zcgx.ticNews.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.zcgx.ticNews.params.WXACodeParams;
 import com.zcgx.ticNews.service.WeChatCoreService;
 import com.zcgx.ticNews.util.Response;
 import io.swagger.annotations.ApiImplicitParam;
@@ -145,5 +147,15 @@ public class WeChatAccountsController {
             e.printStackTrace();
             return Response.error("输入参数解码错误！！！" );
         }
+    }
+
+    @ApiOperation(value = "获取小程序二维码", notes = "获取小程序二维码")
+    @ApiImplicitParam(name = "wxaCodeParams", value = "小程序二维码信息", required = true, dataType = "WXACodeParams")
+    @RequestMapping(value = "/getWXACode",method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+    public Response<Object> getWXACode(@RequestBody WXACodeParams wxaCodeParams){
+        logger.info("ACodeParams is : " + JSON.toJSONString(wxaCodeParams));
+        Object result = weChatCoreService.getWXACodeUnlimit(wxaCodeParams);
+        logger.info("getWXACodeUnlimit return is : " + result);
+        return Response.ok(result);
     }
 }
