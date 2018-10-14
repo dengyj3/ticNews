@@ -264,7 +264,7 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
             logger.error("小程序返回的access_token为\"\"或null ... " );
             return null;
         }
-        jsonObject.put("access_token", accessToken);
+//        jsonObject.put("access_token", accessToken);
         jsonObject.put("scene", "id="+wxaCodeParams.getId());
         jsonObject.put("page", wxaCodeParams.getPage());
         jsonObject.put("width", wxaCodeParams.getWidth()+"px");
