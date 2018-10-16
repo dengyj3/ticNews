@@ -2,11 +2,13 @@ package com.zcgx.ticNews.service.impl;
 
 import com.zcgx.ticNews.dao.ArticleDao;
 import com.zcgx.ticNews.dao.TagArticleRelationDao;
+import com.zcgx.ticNews.dao.TagDao;
 import com.zcgx.ticNews.dao.VoteDao;
 import com.zcgx.ticNews.dto.ArticleDTO;
 import com.zcgx.ticNews.dto.DailyArticleDTO;
 import com.zcgx.ticNews.dto.EventTrackVo;
 import com.zcgx.ticNews.po.Article;
+import com.zcgx.ticNews.po.Tag;
 import com.zcgx.ticNews.po.Vote;
 import com.zcgx.ticNews.service.ArticleService;
 import com.zcgx.ticNews.service.TagArticleRelationService;
@@ -35,6 +37,8 @@ public class ArticleServiceImpl implements ArticleService {
     TagArticleRelationService tagArticleRelationService;
     @Autowired
     VoteDao voteDao;
+    @Autowired
+    TagDao tagDao;
 
     @Override
     public Response<PageList<ArticleDTO>> queryArticleList(int pageNo, int pageSize)  throws Exception{
