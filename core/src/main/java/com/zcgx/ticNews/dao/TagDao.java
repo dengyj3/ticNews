@@ -16,5 +16,6 @@ public interface TagDao extends JpaRepository<Tag, Long>, JpaSpecificationExecut
     @Query(value = "select * from jianbao.tbl_tag where tag_name=?1", nativeQuery = true)
     Tag findByTagName(String tagName);
 
-
+    @Query(value = "select * from jianbao.tbl_tag where id in (?1)", nativeQuery = true)
+    List<Tag> findByIds(List<Long> ids);
 }
