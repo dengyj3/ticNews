@@ -34,4 +34,8 @@ public interface ArticleDao extends JpaRepository<Article, Long>, JpaSpecificati
 
     @Query(value = "select * from jianbao.tbl_article_list where DATE_FORMAT(create_time,'%Y%m%d') = ?1 order by id desc limit 10", nativeQuery = true)
     List<Article> findArticleByCreateTime(String date);
+    @Modifying
+    @Transactional
+    @Query(value = "delete from jianbao.tbl_article_list where id=?1", nativeQuery = true)
+    int deleteById(long id);
 }
