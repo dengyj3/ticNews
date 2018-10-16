@@ -15,6 +15,7 @@ public class ArticleDTO {
     private String source;
     private String unionid;
     private String vote;
+    private String content;
 
     public String getSource() {
         return source;
@@ -120,5 +121,12 @@ public class ArticleDTO {
 
     public void setVote(String vote) {
         this.vote = vote;
+    }
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }
