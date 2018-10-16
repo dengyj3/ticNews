@@ -53,6 +53,7 @@ public class ArticleServiceImpl implements ArticleService {
             articleDTO.setVoteNegtiveCount(article.getVoteNegtiveCount());
             articleDTO.setUrl(article.getUrl());
             articleDTO.setSource(article.getSource());
+            articleDTO.setContent(article.getContent());
             articleDTOList.add(articleDTO);
         });
         PageList<ArticleDTO> pageList = new PageList<ArticleDTO>(pageNo, pageSize, (int)count, articleDTOList);
