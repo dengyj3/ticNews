@@ -35,9 +35,6 @@ public class ArticleServiceImpl implements ArticleService {
     TagArticleRelationService tagArticleRelationService;
     @Autowired
     VoteDao voteDao;
-    
-    @Autowired
-    TagArticleRelationDao tagArticleRelationDao;
 
     @Override
     public Response<PageList<ArticleDTO>> queryArticleList(int pageNo, int pageSize)  throws Exception{
