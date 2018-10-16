@@ -10,6 +10,6 @@ public interface TagArticleRelationService {
     TagArticleRelation modifyTagArticleRelation(TagArticleRelation tagArticleRelation);
     List<Long> queryTagArticleRelation(List<Long> tagId);
 
-    List<TagArticleRelation> deleteTagArticleRelationByArticleId(long articleId);
-    List<TagArticleRelation> deleteTagArticleRelationByTagId(long tagId);
+    int deleteTagArticleRelationByArticleId(long articleId);
+    int deleteTagArticleRelationByTagId(long tagId);
 }
