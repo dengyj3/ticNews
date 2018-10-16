@@ -35,12 +35,12 @@ public class TagArticleRelationServiceImpl implements TagArticleRelationService 
     }
 
     @Override
-    public List<TagArticleRelation> deleteTagArticleRelationByArticleId(long articleId) {
+    public int deleteTagArticleRelationByArticleId(long articleId) {
         return tagArticleRelationDao.deleteByArticleId(articleId);
     }
 
     @Override
-    public List<TagArticleRelation> deleteTagArticleRelationByTagId(long tagId) {
+    public int deleteTagArticleRelationByTagId(long tagId) {
         return tagArticleRelationDao.deleteByTagId(tagId);
     }
 }
