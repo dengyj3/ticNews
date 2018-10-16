@@ -61,6 +61,7 @@ public class ArticleManageController {
 
             return Response.ok(article);
         }catch (Exception e){
+            e.printStackTrace();
             logger.error("新增文章失败! " + e);
             return Response.error("新增文章失败! " + e);
         }
@@ -72,6 +73,7 @@ public class ArticleManageController {
             Article article = articleService.queryArticle(id);
             return Response.ok(article);
         }catch (Exception e){
+            e.printStackTrace();
             logger.error("获取文章失败! " + e);
             return Response.error("获取文章失败! " + e);
         }
@@ -97,6 +99,7 @@ public class ArticleManageController {
             articleService.updateArticle(article);
             return Response.ok(article);
         }catch (Exception e){
+            e.printStackTrace();
             logger.error("更新文章失败! " + e);
             return Response.error("更新文章失败! " + e);
         }
@@ -110,6 +113,7 @@ public class ArticleManageController {
             tagArticleRelationService.deleteTagArticleRelationByArticleId(id);
             return Response.ok("SUCCESS");
         }catch (Exception e){
+            e.printStackTrace();
             logger.error("删除文章失败! " + e);
             return Response.error("删除文章失败! " + e);
         }
