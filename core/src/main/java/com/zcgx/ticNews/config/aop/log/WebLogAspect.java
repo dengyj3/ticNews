@@ -27,7 +27,7 @@ public class WebLogAspect {
     ThreadLocal<Long> startTime = new ThreadLocal<>();
     @Autowired
     WebLogDao webLogDao;
-    @Pointcut("execution(public * com.zcgx.ticNews.controller.*.updateArticle(..))")
+    @Pointcut("execution(public * com.zcgx.ticNews.controller.*.test(..))")
     public void webLog(){}
     @Before("webLog()")
     public void doBefore(JoinPoint joinPoint){
