@@ -35,6 +35,9 @@ public class ArticleServiceImpl implements ArticleService {
     TagArticleRelationService tagArticleRelationService;
     @Autowired
     VoteDao voteDao;
+    
+    @Autowired
+    TagArticleRelationDao tagArticleRelationDao;
 
     @Override
     public Response<PageList<ArticleDTO>> queryArticleList(int pageNo, int pageSize)  throws Exception{
@@ -54,6 +57,9 @@ public class ArticleServiceImpl implements ArticleService {
             articleDTO.setUrl(article.getUrl());
             articleDTO.setSource(article.getSource());
             articleDTO.setContent(article.getContent());
+            List<Long> tagIdList = tagArticleRelationDao.findByArticleId(article.getId());
+            List<Tag> tags = tagDao.findByIds(tagIdList);
+            articleDTO.setTags(tags);
             articleDTOList.add(articleDTO);
         });
         PageList<ArticleDTO> pageList = new PageList<ArticleDTO>(pageNo, pageSize, (int)count, articleDTOList);
