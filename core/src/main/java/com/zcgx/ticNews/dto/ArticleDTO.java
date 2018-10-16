@@ -1,5 +1,6 @@
 package com.zcgx.ticNews.dto;
 
+import com.zcgx.ticNews.po.Tag;
 import java.util.List;
 
 public class ArticleDTO {
@@ -16,6 +17,7 @@ public class ArticleDTO {
     private String unionid;
     private String vote;
     private String content;
+    private List<Tag> tags;
 
     public String getSource() {
         return source;
@@ -128,5 +130,12 @@ public class ArticleDTO {
 
     public void setContent(String content) {
         this.content = content;
+    }
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
     }
 }
