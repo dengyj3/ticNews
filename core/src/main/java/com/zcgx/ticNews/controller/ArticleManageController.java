@@ -88,9 +88,9 @@ public class ArticleManageController {
             article.setContent(jsonObject.getString("content"));
             article.setUrl(jsonObject.getString("url"));
             article.setVotePositiveName(jsonObject.getString("votePositiveName"));
-            article.setVotePositiveCount(jsonObject.getLong("votePositiveCount"));
+            //article.setVotePositiveCount(jsonObject.getLong("votePositiveCount"));
             article.setVoteNegtiveName(jsonObject.getString("voteNegtiveName"));
-            article.setVoteNegtiveCount(jsonObject.getLong("voteNegtiveCount"));
+            //article.setVoteNegtiveCount(jsonObject.getLong("voteNegtiveCount"));
             article.setSource(jsonObject.getString("source"));
             article.setUpdateTime(new Date());
             article.setId(id);
