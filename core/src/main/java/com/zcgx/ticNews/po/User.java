@@ -11,7 +11,7 @@ public class User {
     private int subscribe;
     private String openid;
     private String unionid;
-    private int subscribeNewspaper = 2;//默认未订阅
+    private int subscribeNewspaper;//默认未订阅
     private int userSource = 1;//默认来源公众号
     private String mpOpenid;
     private String remark;
