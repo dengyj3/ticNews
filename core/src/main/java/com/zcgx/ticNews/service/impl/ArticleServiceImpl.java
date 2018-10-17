@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service("articleService")
 public class ArticleServiceImpl implements ArticleService {
@@ -75,25 +74,22 @@ public class ArticleServiceImpl implements ArticleService {
     public Response<ArticleDTO> queryArticleDetail(long id, String unionid) throws Exception {
         Article article = articleDao.findById(id);
         List<Long> tagIds = tagArticleRelationDao.findByArticleId(id);
-        if (tagIds.isEmpty()){
-            return Response.error("文章标签为空! ");
-        }
-        List<Integer> articleIds = tagArticleRelationService.queryTagArticleRelation(tagIds);
-        Iterator<Integer> iterator = articleIds.iterator();
-        List<Long> articleNew = new ArrayList<>();
-        while (iterator.hasNext()){
-            int tmp = iterator.next();
-            if (tmp == id){
-                iterator.remove();
-                continue;
-            }
-            articleNew.add((long)tmp);
-        }
-//        articleIds = articleIds.stream().filter(l->l !=id).collect(Collectors.toList());
         List<Article> articleEvent = null;
-        if (!articleNew.isEmpty()){
-            articleEvent = articleDao.findEventTrackByArticleId(articleNew);
-
+        if (!tagIds.isEmpty()){
+            List<Integer> articleIds = tagArticleRelationService.queryTagArticleRelation(tagIds);
+            Iterator<Integer> iterator = articleIds.iterator();
+            List<Long> articleNew = new ArrayList<>();
+            while (iterator.hasNext()){
+                int tmp = iterator.next();
+                if (tmp == id){
+                    iterator.remove();
+                    continue;
+                }
+                articleNew.add((long)tmp);
+            }
+            if (!articleNew.isEmpty()){
+                articleEvent = articleDao.findEventTrackByArticleId(articleNew);
+            }
         }
         ArticleDTO articleDTO = new ArticleDTO();
         if (article != null){
@@ -115,7 +111,7 @@ public class ArticleServiceImpl implements ArticleService {
                 }
             }
             List<EventTrackVo> eventTracking = new ArrayList<>();
-            if (articleEvent!=null) {
+            if (articleEvent != null) {
                 articleEvent.stream().forEach(article1 -> {
                     EventTrackVo eventTrackVo = new EventTrackVo();
                     eventTrackVo.setId(article1.getId());
