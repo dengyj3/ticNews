@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service("articleService")
 public class ArticleServiceImpl implements ArticleService {
@@ -74,7 +75,7 @@ public class ArticleServiceImpl implements ArticleService {
         Article article = articleDao.findById(id);
         List<Long> tagIds = tagArticleRelationDao.findByArticleId(id);
         List<Long> articleIds = tagArticleRelationService.queryTagArticleRelation(tagIds);
-        articleIds.remove(id);
+        articleIds = articleIds.stream().filter(l->l !=id).collect(Collectors.toList());
         List<Article> articleEvent = articleDao.findEventTrackByArticleId(articleIds);
         ArticleDTO articleDTO = new ArticleDTO();
         if (article != null){
