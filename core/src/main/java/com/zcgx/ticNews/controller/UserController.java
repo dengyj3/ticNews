@@ -6,6 +6,7 @@ import com.zcgx.ticNews.service.UserService;
 import com.zcgx.ticNews.util.Response;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,21 @@ public class UserController {
     @ApiImplicitParam(name = "userInfo", value = "小程序用户信息", required = true, dataType = "User")
     @RequestMapping(value = "/saveUser", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
     public Response<User> saveUser(@RequestBody JSONObject userInfo){
+        logger.info("receive userInfo is : " + userInfo.toJSONString());
         try {
-            User user = new User();
+            if (userInfo.containsKey("unionid")) {
+                if (StringUtils.isBlank(userInfo.getString("unionid"))){
+                    return Response.error("unionid不能为空!");
+                }
+            }else {
+                return Response.error("必须包含unionid参数");
+            }
+            String unionid = userInfo.getString("unionid");
+            User user = userService.findByUnionId(unionid);
+            if (null == user){
+                user = new User();
+            }
+            user.setUnionid(unionid);
             if (userInfo.containsKey("openid")) {
                 user.setOpenid(userInfo.getString("openid"));
             }
@@ -34,9 +48,6 @@ public class UserController {
             }
             if (userInfo.containsKey("remark")) {
                 user.setRemark(userInfo.getString("remark"));
-            }
-            if (userInfo.containsKey("unionid")) {
-                user.setUnionid(userInfo.getString("unionid"));
             }
             if (userInfo.containsKey("mpOpenid")) {
                 user.setMpOpenid(userInfo.getString("mpOpenid"));
@@ -48,11 +59,12 @@ public class UserController {
                 user.setUserSource(userInfo.getInteger("userSource"));
             }
             userService.saveUser(user);
+            logger.info("insert or save user is : " + user);
             return Response.ok(user);
         }catch (Exception e){
             e.printStackTrace();
-            logger.error("新增用户失败! " + e);
-            return Response.error("新增用户失败! " + e);
+            logger.error("新增或更新用户失败! " + e);
+            return Response.error("新增或更新用户失败! " + e);
         }
     }
 
