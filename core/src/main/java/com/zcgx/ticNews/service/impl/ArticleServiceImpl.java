@@ -75,6 +75,9 @@ public class ArticleServiceImpl implements ArticleService {
     public Response<ArticleDTO> queryArticleDetail(long id, String unionid) throws Exception {
         Article article = articleDao.findById(id);
         List<Long> tagIds = tagArticleRelationDao.findByArticleId(id);
+        if (tagIds.isEmpty()){
+            return Response.error("文章标签为空! ");
+        }
         List<Long> articleIds = tagArticleRelationService.queryTagArticleRelation(tagIds);
         Iterator<Long> iterator = articleIds.iterator();
         while (iterator.hasNext()){
