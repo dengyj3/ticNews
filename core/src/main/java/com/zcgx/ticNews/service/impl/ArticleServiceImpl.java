@@ -106,6 +106,7 @@ public class ArticleServiceImpl implements ArticleService {
             articleDTO.setVoteNegtiveCount(article.getVoteNegtiveCount());
             articleDTO.setUrl(article.getUrl());
             articleDTO.setSource(article.getSource());
+            articleDTO.setContent(article.getContent());
             if (StringUtils.isNotBlank(unionid)){
                 Vote vote = voteDao.findByArticleIdAndUnionid(id, unionid);
                 if (vote != null) {
