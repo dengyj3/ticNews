@@ -30,7 +30,7 @@ public class TagArticleRelationServiceImpl implements TagArticleRelationService 
     }
 
     @Override
-    public List<Long> queryTagArticleRelation(List<Long> tagId) {
+    public List<Integer> queryTagArticleRelation(List<Long> tagId) {
         return tagArticleRelationDao.findByTagId(tagId);
     }
 
