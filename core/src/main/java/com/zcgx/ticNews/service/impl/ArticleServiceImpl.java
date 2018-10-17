@@ -61,7 +61,7 @@ public class ArticleServiceImpl implements ArticleService {
             articleDTO.setSource(article.getSource());
             articleDTO.setContent(article.getContent());
             List<Long> tagIdList = tagArticleRelationDao.findByArticleId(article.getId());
-            if (tagIdList != null && tagIdList.size() > 0) {
+            if (tagIdList != null && tagIdList.size() >0) {
                 List<Tag> tags = tagDao.findByIds(tagIdList);
                 articleDTO.setTags(tags);
             }
@@ -78,16 +78,23 @@ public class ArticleServiceImpl implements ArticleService {
         if (tagIds.isEmpty()){
             return Response.error("文章标签为空! ");
         }
-        List<Long> articleIds = tagArticleRelationService.queryTagArticleRelation(tagIds);
-        Iterator<Long> iterator = articleIds.iterator();
+        List<Integer> articleIds = tagArticleRelationService.queryTagArticleRelation(tagIds);
+        Iterator<Integer> iterator = articleIds.iterator();
+        List<Long> articleNew = new ArrayList<>();
         while (iterator.hasNext()){
-            long tmp = iterator.next();
+            int tmp = iterator.next();
             if (tmp == id){
                 iterator.remove();
+                continue;
             }
+            articleNew.add((long)tmp);
         }
-        //articleIds = articleIds.stream().filter(l->l !=id).collect(Collectors.toList());
-        List<Article> articleEvent = articleDao.findEventTrackByArticleId(articleIds);
+//        articleIds = articleIds.stream().filter(l->l !=id).collect(Collectors.toList());
+        List<Article> articleEvent = null;
+        if (!articleNew.isEmpty()){
+            articleEvent = articleDao.findEventTrackByArticleId(articleNew);
+
+        }
         ArticleDTO articleDTO = new ArticleDTO();
         if (article != null){
             articleDTO.setId(article.getId());
@@ -107,14 +114,16 @@ public class ArticleServiceImpl implements ArticleService {
                 }
             }
             List<EventTrackVo> eventTracking = new ArrayList<>();
-            articleEvent.stream().forEach(article1 -> {
-                EventTrackVo eventTrackVo = new EventTrackVo();
-                eventTrackVo.setId(article1.getId());
-                eventTrackVo.setTitle(article1.getTitle());
-                eventTrackVo.setUrl(article1.getUrl());
-                eventTrackVo.setCreateTime(DateUtils.getDateStr(article1.getCreateTime()));
-                eventTracking.add(eventTrackVo);
-            });
+            if (articleEvent!=null) {
+                articleEvent.stream().forEach(article1 -> {
+                    EventTrackVo eventTrackVo = new EventTrackVo();
+                    eventTrackVo.setId(article1.getId());
+                    eventTrackVo.setTitle(article1.getTitle());
+                    eventTrackVo.setUrl(article1.getUrl());
+                    eventTrackVo.setCreateTime(DateUtils.getDateStr(article1.getCreateTime()));
+                    eventTracking.add(eventTrackVo);
+                });
+            }
             articleDTO.setEventTracking(eventTracking);
         }
         return Response.ok(articleDTO);
