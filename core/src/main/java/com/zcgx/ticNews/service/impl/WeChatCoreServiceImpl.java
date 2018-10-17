@@ -183,7 +183,10 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
             if (jsonObject.containsKey("errcode")){
                 return result;
             }
-            User user = new User();
+            User user = userService.findByOpenId(openid);
+            if (null == user){
+                user = new User();
+            }
             user.setOpenid(openid);
             if (jsonObject.containsKey("subscribe")) {
                 user.setSubscribe(jsonObject.getInteger("subscribe"));
@@ -191,7 +194,7 @@ public class WeChatCoreServiceImpl implements WeChatCoreService {
             if (jsonObject.containsKey("remark")) {
                 user.setRemark(jsonObject.getString("remark"));
             }
-            if (jsonObject.containsKey("unionid")) {
+            if (jsonObject.containsKey("unionid") && StringUtils.isNotBlank(jsonObject.getString("unionid"))) {
                 user.setUnionid(jsonObject.getString("unionid"));
             }
             userService.saveUser(user);
