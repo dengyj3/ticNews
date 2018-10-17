@@ -48,6 +48,7 @@ public class ArticleController {
         try {
             return articleService.queryArticleDetail(id, unionid);
         }catch (Exception e){
+            e.printStackTrace();
             logger.error("获取文章详情失败! " + e);
             return Response.error("获取文章详情失败! " + e);
         }
@@ -62,6 +63,7 @@ public class ArticleController {
             String unionid = jsonObject.getString("unionid");
             return articleService.operation(id, vote, unionid);
         }catch (Exception e){
+            e.printStackTrace();
             logger.error("用户表态失败! " + e);
             return Response.error("用户表态失败! " + e);
         }
