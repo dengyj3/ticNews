@@ -79,11 +79,11 @@ public class MessageModelUtil {
      */
     public static String followResponseMessageModel1(TextMessage textMessage, String url) {
 
-        textMessage.setCreateTime(new Date().getTime());
-        textMessage.setMsgType(MessageUtil.RESP_MESSAGE_TYPE_TEXT);
+        //textMessage.setCreateTime(new Date().getTime());
+        //textMessage.setMsgType(MessageUtil.RESP_MESSAGE_TYPE_TEXT);
         textMessage.setMsgId(0);
-        textMessage.setCreateTime(new Date().getTime());
-        textMessage.setContent("欢迎关注TIC学院。点击获取每天3分钟的行业资讯速览。\n<a href=\""+ url +"\">欢迎订阅检报</a>");
+        //textMessage.setCreateTime(new Date().getTime());
+        textMessage.setContent(url);
         return MessageUtil.textMessageToXml(textMessage);
     }
 
