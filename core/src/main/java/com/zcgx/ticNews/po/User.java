@@ -79,4 +79,18 @@ public class User {
     public void setRemark(String remark) {
         this.remark = remark;
     }
+    
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", subscribe=" + subscribe +
+                ", openid='" + openid + '\'' +
+                ", unionid='" + unionid + '\'' +
+                ", subscribeNewspaper=" + subscribeNewspaper +
+                ", userSource=" + userSource +
+                ", mpOpenid='" + mpOpenid + '\'' +
+                ", remark='" + remark + '\'' +
+                '}';
+    }
 }
