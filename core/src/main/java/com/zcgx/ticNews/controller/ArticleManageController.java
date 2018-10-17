@@ -42,21 +42,27 @@ public class ArticleManageController {
             article.setUrl(jsonObject.getString("url"));
             article.setSource(jsonObject.getString("source"));
             article.setVotePositiveName(jsonObject.getString("votePositiveName"));
-            article.setVotePositiveCount(jsonObject.getInteger("votePositiveCount"));
+            if (jsonObject.containsKey("votePositiveCount")) {
+                article.setVotePositiveCount(jsonObject.getInteger("votePositiveCount"));
+            }
             article.setVoteNegtiveName(jsonObject.getString("voteNegtiveName"));
-            article.setVoteNegtiveCount(jsonObject.getInteger("voteNegtiveCount"));
+            if (jsonObject.containsKey("voteNegtiveCount")) {
+                article.setVoteNegtiveCount(jsonObject.getInteger("voteNegtiveCount"));
+            }
             articleService.addArticle(article);
-            List<String> tagList = (List<String>) jsonObject.get("tags");
-            if (tagList.size()>0) {
-                tagList.stream().forEach(t -> {
-                    Tag tag = new Tag();
-                    tag.setTagName(t);
-                    tag = tagService.addTag(tag);
-                    TagArticleRelation tagArticleRelation = new TagArticleRelation();
-                    tagArticleRelation.setArticleId(article.getId());
-                    tagArticleRelation.setTagId(tag.getId());
-                    tagArticleRelationService.addTagArticleRelation(tagArticleRelation);
-                });
+            if (jsonObject.containsKey("tags")) {
+                List<String> tagList = (List<String>) jsonObject.get("tags");
+                if (tagList.size() > 0) {
+                    tagList.stream().forEach(t -> {
+                        Tag tag = new Tag();
+                        tag.setTagName(t);
+                        tag = tagService.addTag(tag);
+                        TagArticleRelation tagArticleRelation = new TagArticleRelation();
+                        tagArticleRelation.setArticleId(article.getId());
+                        tagArticleRelation.setTagId(tag.getId());
+                        tagArticleRelationService.addTagArticleRelation(tagArticleRelation);
+                    });
+                }
             }
 
             return Response.ok(article);
