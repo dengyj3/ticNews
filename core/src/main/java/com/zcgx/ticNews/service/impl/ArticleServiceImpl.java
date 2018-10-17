@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -75,7 +76,14 @@ public class ArticleServiceImpl implements ArticleService {
         Article article = articleDao.findById(id);
         List<Long> tagIds = tagArticleRelationDao.findByArticleId(id);
         List<Long> articleIds = tagArticleRelationService.queryTagArticleRelation(tagIds);
-        articleIds = articleIds.stream().filter(l->l !=id).collect(Collectors.toList());
+        Iterator<Long> iterator = articleIds.iterator();
+        while (iterator.hasNext()){
+            long tmp = iterator.next();
+            if (tmp == id){
+                iterator.remove();
+            }
+        }
+        //articleIds = articleIds.stream().filter(l->l !=id).collect(Collectors.toList());
         List<Article> articleEvent = articleDao.findEventTrackByArticleId(articleIds);
         ArticleDTO articleDTO = new ArticleDTO();
         if (article != null){
