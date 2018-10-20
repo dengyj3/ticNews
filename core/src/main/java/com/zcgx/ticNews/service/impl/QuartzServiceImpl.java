@@ -30,7 +30,7 @@ public class QuartzServiceImpl implements QuartzService {
     String templateId; //推送消息的模板Id
 
     @Override
-    @Scheduled(cron = "0 0 10 * * MON-FRI")
+    @Scheduled(cron = "0 0 10 ? * MON-FRI")
     public void pushMessage() {
         if (isPush){
             logger.info("push message switch is true");
