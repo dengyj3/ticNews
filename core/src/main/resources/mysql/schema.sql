@@ -100,3 +100,6 @@ CREATE TABLE `tbl_pf_list` (
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+select t1.apply_sn,t1.enterprise_name,t1.product_name,t2.pf_name from tbl_ftban t1 left join (select processid,group_concat(ylid,'_',cname order by ylid) pf_name from tbl_pf_list group by processid)t2 on t1.processid=t2.processid
+
