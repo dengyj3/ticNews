@@ -68,3 +68,35 @@ create table `tbl_url_config`(
 	`url` varchar(255) COMMENT '订阅早报URL',
 	PRIMARY KEY (`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='配置表';
+
+drop table `tbl_ftban`;
+CREATE TABLE `tbl_ftban` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `apply_sn` varchar(255) DEFAULT NULL,
+  `apply_sntt` varchar(255) DEFAULT NULL,
+  `apply_enter_address` varchar(255) DEFAULT NULL,
+  `enterprise_name` varchar(255) DEFAULT NULL,
+  `enterprise_namett` varchar(255) DEFAULT NULL,
+  `is_off` varchar(255) DEFAULT NULL,
+  `new_processid` varchar(255) DEFAULT NULL,
+  `off_date` varchar(255) DEFAULT NULL,
+  `org_name` varchar(255) DEFAULT NULL,
+  `processid` varchar(255) DEFAULT NULL,
+  `product_name` varchar(255) DEFAULT NULL,
+  `product_namett` varchar(255) DEFAULT NULL,
+  `province_confirm` varchar(255) DEFAULT NULL,
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+drop table `tbl_pf_list`;
+CREATE TABLE `tbl_pf_list` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `cas` varchar(255) DEFAULT NULL,
+  `cname` varchar(255) DEFAULT NULL,
+  `pfname` varchar(255) DEFAULT NULL,
+  `processid` varchar(255) DEFAULT NULL,
+  `ylid` int(11) NOT NULL,
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
