@@ -12,12 +12,16 @@ import com.zcgx.ticNews.service.FTService;
 import com.zcgx.ticNews.util.HttpBaseUtils;
 import com.zcgx.ticNews.util.PageList;
 import com.zcgx.ticNews.util.Response;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +46,6 @@ public class FTServiceImpl implements FTService {
         String url = "http://125.35.6.80:8080/ftban/itownet/fwAction.do?method=getBaNewInfoPage";
         Map<String, String> paramMap = new HashMap<>();
         paramMap.put("on", "true");
-//        paramMap.put("page", "1");
         paramMap.put("pageSize", "15");
         paramMap.put("productName", "");
         paramMap.put("conditionType", "1");
@@ -50,15 +53,38 @@ public class FTServiceImpl implements FTService {
         paramMap.put("applysn", "");
 
 
-//        JSONObject jsonObject = JSON.parseObject(result);
         int pageCount = 105468;//jsonObject.getInteger("pageCount");
-//        JSONArray jsonArray = jsonObject.getJSONArray("list");
-        pageCount = 2;
-        for (int i = 1; i<=pageCount; i++){
+        for (int i = 221; i<=pageCount; i++){
+            logger.info("page--->>>" + i);
             paramMap.put("page", i+"");
             String result = HttpBaseUtils.postRequest(restTemplate, url, headerMap, paramMap);
             System.out.println("ftban list is : " + result);
+            if (StringUtils.isBlank(result)){
+                for (int k=0; k<3; k++) {
+                    result = HttpBaseUtils.postRequest(restTemplate, url, headerMap, paramMap);
+                    if (StringUtils.isNotBlank(result)){
+                        break;
+                    }
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (StringUtils.isBlank(result)){
+                    try {
+                        FileUtils.writeStringToFile(new File("D:/fail_fb.txt"), i+"\n", "utf-8", true);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    continue;
+                }
+            }
             JSONObject jsonObject = JSON.parseObject(result);
+            if (!jsonObject.containsKey("list")){
+                logger.error("it not contain list ..." + result);
+                continue;
+            }
             JSONArray jsonArray = jsonObject.getJSONArray("list");
             for (int j = 0; j<jsonArray.size(); j++){
                 JSONObject jsonObject1 = jsonArray.getJSONObject(j);
@@ -85,6 +111,14 @@ public class FTServiceImpl implements FTService {
                 ftBanListDao.save(ftBanList);
                 findPFList(processid);
             }
+            if (i % 20 == 0){
+                try {
+                    Thread.sleep(1000 * 60);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
         }
         return null;
     }
@@ -93,8 +127,12 @@ public class FTServiceImpl implements FTService {
     public String findPFList(String processid) {
         String pfUrl = "http://125.35.6.80:8080/ftban/itownet/fwAction.do?method=getBaInfo&processid=" + processid;
         String pfResult = HttpBaseUtils.postRequest(restTemplate, pfUrl, headerMap, null);
-        System.out.println("pf result is : " + pfResult);
+//        System.out.println("pf result is : " + pfResult);
         JSONObject jsonObject = JSON.parseObject(pfResult);
+        if (!jsonObject.containsKey("pfList")){
+            logger.error("It not contain pfList..." + pfResult);
+            return null;
+        }
         JSONArray jsonArray = jsonObject.getJSONArray("pfList");
         for (int i = 0; i<jsonArray.size(); i++){
             JSONObject jsonObject1 = jsonArray.getJSONObject(i);
